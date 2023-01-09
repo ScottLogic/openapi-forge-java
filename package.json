@@ -1,0 +1,48 @@
+{
+  "name": "openapi-forge-java",
+  "version": "0.1.0",
+  "description": "OpenAPI-Forge Java template",
+  "apiTemplates": [],
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install",
+    "test": "ls",
+    "test:generators": "node testGenerators",
+    "lint:check:all": "eslint .",
+    "lint:write:all": "eslint --fix .",
+    "format:check:all": "npm run format:check:java && npm run format:check:javascript",
+    "format:check:java": "ls",
+    "format:check:javascript": "prettier --check .",
+    "format:write:all": "npm run format:write:java && npm run format:write:javascript",
+    "format:write:java": "ls",
+    "format:write:javascript": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ms14981/openapi-forge-java-initial.git"
+  },
+  "keywords": [
+    "openapi-forge",
+    "java"
+  ],
+  "author": "murcikan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ms14981/openapi-forge-java-initial/issues"
+  },
+  "homepage": "https://github.com/ms14981/openapi-forge-java-initial#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "eslint": "^8.24.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "handlebars": "^4.7.7",
+    "husky": "^8.0.1",
+    "path": "^0.12.7",
+    "prettier": "^2.7.1",
+    "semantic-release": "^19.0.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
