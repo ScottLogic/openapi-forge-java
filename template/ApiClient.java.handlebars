@@ -1,0 +1,67 @@
+package com.example.springboot;
+
+import com.squareup.okhttp.OkHttpClient;
+
+public class ApiClient{{_tag.name}} { // will get replaced using handlebars _tags 
+
+    String contenType = "application/json";
+    final String _baseAddress;
+    final OkHttpClient _client;
+
+    public ApiClient{{_tag.name}}(OkHttpClient httpClient, Configuration config) {
+        _client = httpClient;
+        _baseAddress = config.getBaseAddress();
+    }
+
+    {{#each paths}}
+    {{~setVar "path" @key}}
+    {{~#each this}}
+    {{~#ifEquals ../../_tag.name _tag.name}}
+    {{~#if (pathContentTypeSupported this)}}
+    {{#if summary}}
+    /// <summary>
+    /// {{summary}}
+    /// </summary>
+    {{/if}}
+    {{#if description}}
+    /// {{description}}
+    {{/if}}
+    {{#if tags}}
+    /// <tags>{{tags}}</tags>
+    {{/if}}
+    {{#each _sortedParameters}}
+    /// <param name="{{name}}">{{description}}</param>
+    {{/each}}
+    public {{#if _response.schema}}{{safeTypeConvert _response.schema}}{{/if}} {{operationId}}(
+        {{~#each _sortedParameters ~}}
+        {{toParamName name ~}}
+        {{~#unless @last}}, {{/unless ~}}
+        {{~/each ~}}
+    ) {
+        {{createQueryStringSnippet _sortedParameters}}
+        
+        var requestUri = $"{_baseAddress}{{setPathParameters @root.path _sortedParameters}}{{#if (queryParametersExist _sortedParameters)}}{queryString}{{/if}}";
+
+        {{~#if (bodyParameterExists _sortedParameters) ~}}
+        RequestBody httpBody = RequestBody.create("application/json; charset=utf-8", body);
+        {{~/if~}}
+
+        Request request = new Request.Builder()
+            .url(requestUri)
+        {{queryType @key}}
+            .build();
+        {{createHeaderParamsSnippet _sortedParameters}}
+        Call call = client.newCall(request);
+        Response response = call.execute();
+
+        {{#if _response.schema}}
+        String responseBodyString = response.body.string();
+        {{createReturnStatement _response.schema}}
+        {{/if}}
+    }
+        {{/if}}
+        {{/ifEquals}}
+        {{/each}}  
+        {{/each}}
+
+}

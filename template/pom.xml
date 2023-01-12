@@ -3,16 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
+		<groupId>testGroup</groupId>
+		<artifactId>api</artifactId>
 		<version>3.0.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>spring-boot-complete</artifactId>
+	<artifactId>ApiClient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-boot-complete</name>
-	<description>Demo project for Spring Boot</description>
+	<name>ApiClient</name>
+	<description>ApiClient for X</description>
 
 	<properties>
 		<java.version>17</java.version>
@@ -30,6 +30,13 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<!-- end::actuator[] -->
+
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>4.10.0</version>
+		</dependency>
+
 
 		<!-- tag::tests[] -->
 		<dependency>
