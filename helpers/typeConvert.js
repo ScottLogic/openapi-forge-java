@@ -42,7 +42,7 @@ const fromType = (propType, additionalProperties, items) => {
         return "Object";
       }
     default:
-      return "";
+      return "void";
   }
 };
 
