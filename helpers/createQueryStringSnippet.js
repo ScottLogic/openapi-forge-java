@@ -16,7 +16,7 @@ const isStringArrayParam = (param) =>
 
 const serialiseArrayParam = (param) => {
   const safeParamName = toParamName(param.name);
-  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p => "${param.name}=".concat(${isStringArrayParam(param) ? 'java.net.URLEncoder(p)' : 'p'} )))`;
+  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p -> "${param.name}=".concat(${isStringArrayParam(param) ? 'java.net.URLEncoder(p)' : 'p'} )))`;
 
   return `${indent}if (${safeParamName} != null && ${safeParamName}.length > 0)
 ${indent}{
