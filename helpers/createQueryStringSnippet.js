@@ -16,11 +16,9 @@ const isStringArrayParam = (param) =>
 
 const serialiseArrayParam = (param) => {
   const safeParamName = toParamName(param.name);
-  const serialisedParam = `{string.Join("&", ${safeParamName}.Select(p => $"${
-    param.name
-  }={${isStringArrayParam(param) ? "java.net.URLEncoder(p)" : "p"}}"))}`;
+  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p => "${param.name}=".concat(${isStringArrayParam(param) ? 'java.net.URLEncoder(p)' : 'p'} )))`;
 
-  return `${indent}if (${safeParamName} != null && ${safeParamName}.Length > 0)
+  return `${indent}if (${safeParamName} != null && ${safeParamName}.length > 0)
 ${indent}{
     ${prefixSerialisedQueryParam(serialisedParam)}
 ${indent}}`;
@@ -50,7 +48,7 @@ const serialisePrimitive = (param) => {
     : safeParamName;
 
   const serialisedParam = prefixSerialisedQueryParam(
-    `${param.name}={${escaped}}`
+    `"${param.name}=".concat(${escaped})`
   );
   return param._optional
     ? `${indent}if (${safeParamName} != null)
@@ -61,7 +59,7 @@ ${indent}}`
 };
 
 const prefixSerialisedQueryParam = (serialisedQueryParam) =>
-  `${indent}queryString.Append($"{(queryString.Length == 0 ? "?" : "&")}${serialisedQueryParam}");`;
+  `${indent}queryString.append((queryString.length == 0 ? "?" : "&").concat(${serialisedQueryParam}));`;
 
 const createQueryStringSnippet = (params) => {
   const queryParams = getParametersByType(params, "query");

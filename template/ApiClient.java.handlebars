@@ -34,21 +34,19 @@ public class ApiClient{{_tag.name}} { // will get replaced using handlebars _tag
     {{/each}}
     public {{#if _response.schema}}{{safeTypeConvert _response.schema}}{{/if}} {{operationId}}(
         {{~#each _sortedParameters ~}}
-        {{toParamName name ~}}
-        {{~#unless @last}}, {{/unless ~}}
+            {{~safeTypeConvert schema}} {{toParamName name ~}}
+            {{~#unless @last}}, {{/unless ~}}
         {{~/each ~}}
-    ) {
+    ) 
+    {
         {{createQueryStringSnippet _sortedParameters}}
-        
-        var requestUri = $"{_baseAddress}{{setPathParameters @root.path _sortedParameters}}{{#if (queryParametersExist _sortedParameters)}}{queryString}{{/if}}";
-
-        {{~#if (bodyParameterExists _sortedParameters) ~}}
+        var requestUri = _baseAddress.concat("{{setPathParameters @root.path _sortedParameters}}"){{#if (queryParametersExist _sortedParameters)}}.concat(queryString){{/if}};
+        {{#if (bodyParameterExists _sortedParameters)}}
         RequestBody httpBody = RequestBody.create("application/json; charset=utf-8", body);
-        {{~/if~}}
-
+        {{/if}}
         Request request = new Request.Builder()
             .url(requestUri)
-        {{queryType @key}}
+            {{queryType @key}}
             .build();
         {{createHeaderParamsSnippet _sortedParameters}}
         Call call = client.newCall(request);
