@@ -46,7 +46,11 @@ public class ApiClient{{_tag.name}} { // will get replaced using handlebars _tag
         {{/if}}
         Request request = new Request.Builder()
             .url(requestUri)
+            {{#if (bodyParameterExists _sortedParameters)}}
+            {{queryTypeWithBody @key}}
+            {{else}}
             {{queryType @key}}
+            {{/if}}
             .build();
         {{createHeaderParamsSnippet _sortedParameters}}
         Call call = client.newCall(request);
