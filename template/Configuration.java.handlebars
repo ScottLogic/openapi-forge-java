@@ -4,7 +4,9 @@ public class Configuration {
     
     // write get setters
 
-    public List<String> servers;
+    public List<String> servers = Arrays.asList( {{~#each servers~}}"{{url}}"{{#unless @last}},{{/unless}}{{~/each~}}  );
+
+    public void setServers    
 
     public String basePath;
 
@@ -12,7 +14,7 @@ public class Configuration {
 
     public int selectedServerIndex;
 
-    public virtual String getBaseAddress() {    
+    public String getBaseAddress() {    
         StringBuilder sb = new StringBuilder(basePath);
         sb.Append(Servers[selectedServerIndex]);
         return sb.ToString();
