@@ -2,9 +2,9 @@ package com.example.springboot;
 
 import com.squareup.okhttp.OkHttpClient;
 
-public class ApiClient{{_tag.name}} { // will get replaced using handlebars _tags 
+public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
 
-    String contenType = "application/json";
+    String contentType = "application/json";
     final String _baseAddress;
     final OkHttpClient _client;
 
