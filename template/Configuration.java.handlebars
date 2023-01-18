@@ -2,8 +2,6 @@ package com.example.springboot;
 
 public class Configuration {
     
-    // write get setters
-
     public List<String> servers = Arrays.asList( {{~#each servers~}}"{{url}}"{{#unless @last}},{{/unless}}{{~/each~}}  );
 
     public List<String> getServers() { return servers; }
