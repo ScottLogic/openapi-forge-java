@@ -33,7 +33,7 @@ const fromType = (propType, additionalProperties, items) => {
     case "string":
       return "String";
     case "array":
-      return `${typeConvert(items)}[]`;
+      return `List<${typeConvert(items)}>`;
     // inline object definition
     case "object":
       if (additionalProperties) {
