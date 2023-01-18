@@ -1,5 +1,8 @@
 package com.example.springboot;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Configuration {
     
     public List<String> servers = Arrays.asList( {{~#each servers~}}"{{url}}"{{#unless @last}},{{/unless}}{{~/each~}}  );
@@ -28,7 +31,7 @@ public class Configuration {
 
     public String getBaseAddress() {    
         StringBuilder sb = new StringBuilder(basePath);
-        sb.append(servers[selectedServerIndex]);
+        sb.append(servers.get(selectedServerIndex));
         return sb.toString();
     }
 }
