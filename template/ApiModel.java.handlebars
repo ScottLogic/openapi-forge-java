@@ -1,0 +1,13 @@
+{{#each components.schemas}}
+{{> model}}
+{{#unless @last}}
+
+{{/unless}}
+{{/each}}
+
+{{#each components.inlineObjects}}
+{{> model}}
+{{#unless @last}}
+
+{{/unless}}
+{{/each}}
