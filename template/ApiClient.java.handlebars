@@ -61,6 +61,12 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         {{createReturnStatement _response.schema}}
         {{/if}}
     }
+    {{else}}
+    public {{#if _response.schema}}{{safeTypeConvert _response.schema}}{{/if}} {{operationId}}({{#each _sortedParameters}}{{safeTypeConvert schema}} {{name}}{{#if schema.default}} = {{{quoteIfString schema.default}}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}})
+    {
+        throw new NotImplementedException("Operation '{{operationId}}' most likely does not support json encoded requests which are not supported by openapi forge.");
+    }    
+
         {{/if}}
         {{/ifEquals}}
         {{/each}}  
