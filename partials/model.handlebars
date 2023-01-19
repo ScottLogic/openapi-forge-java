@@ -17,11 +17,11 @@
         /// {{example}}
         /// <example>
         {{/if}}
-        public {{typeConvert this}} {{@key}};
+        public {{{safeTypeConvert this}}} {{@key}};
         
-        public {{typeConvert this}} get{{toParamNameCapital @key}}() { return {{@key}}; }
+        public {{{safeTypeConvert this}}} get{{toParamNameCapital @key}}() { return {{@key}}; }
 
-        public void set{{toParamNameCapital @key}}({{typeConvert this}} new{{toParamNameCapital @key}}) { {{@key}} = new{{toParamNameCapital @key}}; }
+        public void set{{toParamNameCapital @key}}({{{safeTypeConvert this}}} new{{toParamNameCapital @key}}) { {{@key}} = new{{toParamNameCapital @key}}; }
       {{/each}}
     }
     
