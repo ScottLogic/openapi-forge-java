@@ -1,6 +1,9 @@
 package com.example.springboot;
 
-import okhttp3.OkHttpClient; 
+import java.util.List;
+
+import okhttp3.*;
+import com.fasterxml.jackson.databind.*; 
 
 public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
 
@@ -53,7 +56,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
             {{/if}}
             .build();
         {{createHeaderParamsSnippet _sortedParameters}}
-        Call call = client.newCall(request);
+        Call call = _client.newCall(request);
         Response response = call.execute();
 
         {{#if _response.schema}}

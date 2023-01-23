@@ -5,9 +5,9 @@ const queryTypeWithBody = (key) => {
     if (key == "delete") {
         return ".delete()";
     } else if (key == "put") {
-        return ".put(httpbody)"
+        return ".put(httpBody)"
     } else if (key == "post") {
-        return ".post(httpbody)"
+        return ".post(httpBody)"
     } else {
         return "";
     }
