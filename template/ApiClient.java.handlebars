@@ -45,7 +45,9 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         {{createQueryStringSnippet _sortedParameters}}
         var requestUri = _baseAddress.concat("{{setPathParameters @root.path _sortedParameters}}"){{#if (queryParametersExist _sortedParameters)}}.concat(queryString){{/if}};
         {{#if (bodyParameterExists _sortedParameters)}}
-        RequestBody httpBody = RequestBody.create("application/json; charset=utf-8", body);
+        ObjectMapper serMapper = new ObjectMapper(); 
+        String jsonBody = serMapper.writeValueAsString(body);
+        RequestBody httpBody = RequestBody.create("application/json; charset=utf-8", jsonBody);
         {{/if}}
         Request request = new Request.Builder()
             .url(requestUri)
