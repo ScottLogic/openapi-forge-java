@@ -47,6 +47,8 @@ const fromType = (propType, additionalProperties, items) => {
 };
 
 const typeConvert = (prop) => {
+  if (prop === null) return "void";
+
   if (prop === undefined) return "object";
 
   // resolve references
