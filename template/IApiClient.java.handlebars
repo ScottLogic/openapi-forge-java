@@ -1,3 +1,8 @@
+package com.example.springboot;
+
+import java.util.List;
+import java.util.HashMap;
+
 /// <summary>
 /// {{_info.title}}
 /// </summary>
@@ -24,7 +29,7 @@
       {{#each _sortedParameters}}
       /// <param name="{{name}}">{{description}}</param>
       {{/each}}
-    public {{#if _response.schema}}{{safeTypeConvert _response.schema}}{{/if}} {{operationId}}(
+    public {{safeTypeConvert _response.schema}} {{operationId}}(
         {{~#each _sortedParameters ~}}
             {{~safeTypeConvert schema}} {{toParamName name ~}}
             {{~#unless @last}}, {{/unless ~}}

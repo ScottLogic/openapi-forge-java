@@ -1,9 +1,14 @@
 package com.example.springboot;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import okhttp3.*;
 import com.fasterxml.jackson.databind.*; 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 
 public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
 
@@ -43,18 +48,18 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     ) 
     {
         {{createQueryStringSnippet _sortedParameters}}
-        var requestUri = _baseAddress.concat("{{setPathParameters @root.path _sortedParameters}}"){{#if (queryParametersExist _sortedParameters)}}.concat(queryString){{/if}};
+        var requestUri = _baseAddress.concat("{{setPathParameters @root.path _sortedParameters}}"){{#if (queryParametersExist _sortedParameters)}}.concat(queryString.toString()){{/if}};
         {{#if (bodyParameterExists _sortedParameters)}}
         ObjectMapper serMapper = new ObjectMapper(); 
         String jsonBody = serMapper.writeValueAsString(body);
-        RequestBody httpBody = RequestBody.create("application/json; charset=utf-8", jsonBody);
+        RequestBody httpBody = RequestBody.create(jsonBody, MediaType.parse("application/json; charset=utf-8"));
         {{/if}}
         Request request = new Request.Builder()
             .url(requestUri)
             {{#if (bodyParameterExists _sortedParameters)}}
             {{queryTypeWithBody @key}}
             {{else}}
-            {{queryType @key}}
+            {{{queryType @key}}}
             {{/if}}
             .build();
         {{createHeaderParamsSnippet _sortedParameters}}
@@ -62,7 +67,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         Response response = call.execute();
 
         {{#if _response.schema}}
-        String responseBodyString = response.body.string();
+        String responseBodyString = response.body().string();
         {{createReturnStatement _response.schema}}
         {{/if}}
     }
