@@ -16,9 +16,9 @@ const isStringArrayParam = (param) =>
 
 const serialiseArrayParam = (param) => {
   const safeParamName = toParamName(param.name);
-  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p -> "${param.name}=".concat(${isStringArrayParam(param) ? 'java.net.URLEncoder(p)' : 'p'} )))`;
+  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p -> "${param.name}=".concat(${isStringArrayParam(param) ? 'java.net.URLEncoder.encode(p, StandardCharsets.UTF_8)' : 'p'} )).collect(Collectors.toList()))`;
 
-  return `${indent}if (${safeParamName} != null && ${safeParamName}.length > 0)
+  return `${indent}if (${safeParamName} != null && ${safeParamName}.size() > 0)
 ${indent}{
     ${prefixSerialisedQueryParam(serialisedParam)}
 ${indent}}`;
@@ -29,7 +29,7 @@ const serialiseObjectParam = (param) => {
   let serialisedObject = "";
   for (const [propName, objProp] of Object.entries(param.schema.properties)) {
     let serialisedParam = isStringType(objProp)
-      ? `{(${safeParamName}.${propName} == null ? string.Empty : "${propName}=" + java.net.URLEncoder(${safeParamName}.${propName}))}`
+      ? `{(${safeParamName}.${propName} == null ? string.Empty : "${propName}=" + java.net.URLEncoder.encode(${safeParamName}.${propName}, StandardCharsets.UTF_8))}`
       : `${propName}={${safeParamName}.${propName}}`;
 
     serialisedObject += serialisedParam + "&";
@@ -44,7 +44,7 @@ ${indent}}`;
 const serialisePrimitive = (param) => {
   const safeParamName = toParamName(param.name);
   const escaped = isStringType(param.schema)
-    ? `java.net.URLEncoder(${safeParamName})`
+    ? `java.net.URLEncoder.encode(${safeParamName}, StandardCharsets.UTF_8)`
     : safeParamName;
 
   const serialisedParam = prefixSerialisedQueryParam(
@@ -59,7 +59,7 @@ ${indent}}`
 };
 
 const prefixSerialisedQueryParam = (serialisedQueryParam) =>
-  `${indent}queryString.append((queryString.length == 0 ? "?" : "&").concat(${serialisedQueryParam}));`;
+  `${indent}queryString.append((queryString.length() == 0 ? "?" : "&").concat(${serialisedQueryParam}));`;
 
 const createQueryStringSnippet = (params) => {
   const queryParams = getParametersByType(params, "query");
