@@ -1,12 +1,12 @@
 const queryType = (key) => {
-    if (key == "delete") {
-        return ".delete()";
+    if (key == 'delete') {
+        return '.delete()';
     } else if (key == "put") {
-        return ".put()"
+        return '.put(RequestBody.create("", null))'
     } else if (key == "post") {
-        return ".post()"
+        return '.post(RequestBody.create("", null))'
     } else {
-        return "";
+        return '';
     }
 };
 
