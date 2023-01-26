@@ -10,7 +10,7 @@ const complexReturnType = (responseSchema) => {
         case "double":
         case "string":
             return false;
-        case "DateTime":
+        case "Date":
         default:
             return true;
     }

@@ -20,7 +20,7 @@ const createReturnStatement = (responseSchema) => {
     case "long":
     case "float":
     case "double":
-    case "DateTime":
+    case "Date":
       returnStatement = `${responseType}.Parse(responseBody)`;
       break;
     case "string":

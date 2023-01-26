@@ -12,7 +12,7 @@ const fromFormat = (propFormat) => {
       return "double";
     case "date":
     case "date-time":
-      return "DateTime";
+      return "Date";
     case "byte":
     case "binary":
     case "string":
