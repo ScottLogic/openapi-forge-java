@@ -1,7 +1,13 @@
 package com.example.springboot;
 
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import java.io.IOException;
 import java.util.HashMap;
+
 
 /// <summary>
 /// {{_info.title}}
@@ -34,7 +40,7 @@ import java.util.HashMap;
             {{~safeTypeConvert schema}} {{toParamName name ~}}
             {{~#unless @last}}, {{/unless ~}}
         {{~/each ~}}
-    );
+    ) throws IOException{{#if (bodyParameterExists _sortedParameters)}}, JsonProcessingException{{/if}}{{#if (complexReturnType _response.schema)}}, JsonMappingException{{/if}};
 
       {{/ifEquals}}
       {{/each}}  

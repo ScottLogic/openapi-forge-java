@@ -1,13 +1,16 @@
 package com.example.springboot;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import okhttp3.*;
-import com.fasterxml.jackson.databind.*; 
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 
 
 public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
@@ -45,7 +48,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
             {{~safeTypeConvert schema}} {{toParamName name ~}}
             {{~#unless @last}}, {{/unless ~}}
         {{~/each ~}}
-    ) 
+    ) throws IOException{{#if (bodyParameterExists _sortedParameters)}}, JsonProcessingException{{/if}}{{#if (complexReturnType _response.schema)}}, JsonMappingException{{/if}}
     {
         {{createQueryStringSnippet _sortedParameters}}
         var requestUri = _baseAddress.concat("{{setPathParameters @root.path _sortedParameters}}"){{#if (queryParametersExist _sortedParameters)}}.concat(queryString.toString()){{/if}};
