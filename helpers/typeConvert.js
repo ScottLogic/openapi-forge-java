@@ -1,15 +1,31 @@
 const toSafeName = require("./toClassName");
 
-const fromFormat = (propFormat) => {
+const fromFormat = (propFormat, shouldBox) => {
   switch (propFormat) {
     case "int32":
-      return "int";
+      if (shouldBox) {
+        return "Integer";
+      } else {
+        return "int";
+      }
     case "int64":
-      return "long";
+      if (shouldBox) {
+        return "Long";
+      } else {
+        return "long";
+      }
     case "float":
-      return "float";
+      if (shouldBox) {
+        return "Float";
+      } else {
+        return "float";
+      }
     case "double":
-      return "double";
+      if (shouldBox) {
+        return "Double";
+      } else {
+        return "double";
+      }
     case "date":
     case "date-time":
       return "Date";
@@ -22,22 +38,34 @@ const fromFormat = (propFormat) => {
   }
 };
 
-const fromType = (propType, additionalProperties, items) => {
+const fromType = (propType, additionalProperties, items, shouldBox) => {
   switch (propType) {
     case "integer":
-      return "int";
+      if (shouldBox) {
+        return "Integer";
+      } else {
+        return "int";
+      }
     case "number":
-      return "double";
+      if (shouldBox) {
+        return "Double";
+      } else {
+        return "double";
+      }
     case "boolean":
-      return "boolean";
+      if (shouldBox) {
+        return "Boolean";
+      } else {
+        return "boolean";
+      }
     case "string":
       return "String";
     case "array":
-      return `List<${typeConvert(items)}>`;
+      return `List<${typeConvert(items, true)}>`;
     // inline object definition
     case "object":
       if (additionalProperties) {
-        return `HashMap<String,${typeConvert(additionalProperties)}>`;
+        return `HashMap<String,${typeConvert(additionalProperties, true)}>`;
       } else {
         return "Object";
       }
@@ -46,7 +74,7 @@ const fromType = (propType, additionalProperties, items) => {
   }
 };
 
-const typeConvert = (prop) => {
+const typeConvert = (prop, shouldBox = false) => {
   if (prop === null) return "void";
 
   if (prop === undefined) return "object";
@@ -57,8 +85,8 @@ const typeConvert = (prop) => {
   }
 
   const type = prop.format
-    ? fromFormat(prop.format)
-    : fromType(prop.type, prop.additionalProperties, prop.items);
+    ? fromFormat(prop.format, shouldBox)
+    : fromType(prop.type, prop.additionalProperties, prop.items, shouldBox);
 
   return type === "" ? "object" : type;
 };
