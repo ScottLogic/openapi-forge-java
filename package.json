@@ -2,7 +2,11 @@
   "name": "openapi-forge-java",
   "version": "0.1.0",
   "description": "OpenAPI-Forge Java template",
-  "apiTemplates": [],
+  "apiTemplates": [
+    "ApiClient.java.handlebars",
+    "IApiClient.java.handlebars"
+
+  ],
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",

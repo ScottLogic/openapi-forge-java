@@ -1,0 +1,48 @@
+package com.example.springboot;
+
+import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+
+// <summary>
+// {{_info.title}}
+// </summary>
+{{#if info.description}}{{docComment info.description}}{{/if}}
+{{#if info.version}}// <version>{{info.version}}</version>{{/if}}
+
+    public interface IApiClient{{_tag.name}}
+    {
+      {{#each paths}}
+      {{setVar "path" @key}}
+      {{#each this}}
+      {{#ifEquals ../../_tag.name _tag.name}}
+      {{#if summary}}
+      // <summary>
+      // {{summary}}
+      // </summary>
+      {{/if}}
+      {{#if description}}
+      // {{description}}
+      {{/if}}
+      {{#if tags}}
+      // <tags>{{tags}}</tags>
+      {{/if}}
+      {{#each _sortedParameters}}
+      // <param name="{{name}}">{{description}}</param>
+      {{/each}}
+    public {{safeTypeConvert _response.schema}} {{operationId}}(
+        {{~#each _sortedParameters ~}}
+            {{~safeTypeConvert schema}} {{toParamName name ~}}
+            {{~#unless @last}}, {{/unless ~}}
+        {{~/each ~}}
+    ) throws {{#if (pathContentTypeSupported this)}}IOException{{#if (bodyParameterExists _sortedParameters)}}, JsonProcessingException{{/if}}{{#if (complexReturnType _response.schema)}}, JsonMappingException{{/if}}{{else}}UnsupportedOperationException{{/if}};
+
+      {{/ifEquals}}
+      {{/each}}  
+      {{/each}}
+    }

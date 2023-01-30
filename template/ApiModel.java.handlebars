@@ -1,0 +1,18 @@
+package com.example.springboot;
+
+import java.util.Date;
+import java.util.List;
+
+{{#each components.schemas}}
+{{> model}}
+{{#unless @last}}
+
+{{/unless}}
+{{/each}}
+
+{{#each components.inlineObjects}}
+{{> model}}
+{{#unless @last}}
+
+{{/unless}}
+{{/each}}

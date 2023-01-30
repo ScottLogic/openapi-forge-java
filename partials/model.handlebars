@@ -1,0 +1,27 @@
+    {{#if description}}
+    /**
+    * <summary>{{description}}</summary>
+    */
+    {{/if}}
+    class {{toClassName @key}} 
+    {
+      {{#each properties}}
+
+        {{#if description}}
+        // <value>
+        // {{description}}
+        // <value>
+        {{/if}}
+        {{#if example}}
+        // <example>
+        // {{example}}
+        // <example>
+        {{/if}}
+        public {{{safeTypeConvert this}}} {{@key}};
+        
+        public {{{safeTypeConvert this}}} get{{toParamNameCapital @key}}() { return {{@key}}; }
+
+        public void set{{toParamNameCapital @key}}({{{safeTypeConvert this}}} new{{toParamNameCapital @key}}) { {{@key}} = new{{toParamNameCapital @key}}; }
+      {{/each}}
+    }
+    

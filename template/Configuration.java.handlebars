@@ -1,0 +1,37 @@
+package com.example.springboot;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Configuration {
+    
+    public List<String> servers = Arrays.asList( {{~#each servers~}}"{{url}}"{{#unless @last}},{{/unless}}{{~/each~}}  );
+
+    public List<String> getServers() { return servers; }
+
+    public void setServers(List<String> newServers) { servers = newServers; }
+
+    public String basePath;
+
+    public String getBasePath() { return basePath; }
+
+    public void setBasePath(String newBasePath) { basePath = newBasePath; }
+
+    public String bearerToken;
+    
+    public String getBearerToken() { return bearerToken; }
+
+    public void setBearerToken(String newBearerToken) { bearerToken = newBearerToken; }
+    
+    public int selectedServerIndex;
+
+    public int getSelectedServerIndex() { return selectedServerIndex; }
+
+    public void setSelectedServerIndex(int newSelectedServerIndex) { selectedServerIndex = newSelectedServerIndex; }
+
+    public String getBaseAddress() {    
+        StringBuilder sb = new StringBuilder(basePath);
+        sb.append(servers.get(selectedServerIndex));
+        return sb.toString();
+    }
+}

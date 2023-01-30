@@ -1,0 +1,88 @@
+package com.example.springboot;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import okhttp3.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+
+
+public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
+
+    String contentType = "application/json";
+    final String _baseAddress;
+    final OkHttpClient _client;
+
+    public ApiClient{{_tag.name}}(OkHttpClient httpClient, Configuration config) {
+        _client = httpClient;
+        _baseAddress = config.getBaseAddress();
+    }
+
+    {{#each paths}}
+    {{~setVar "path" @key}}
+    {{~#each this}}
+    {{~#ifEquals ../../_tag.name _tag.name}}
+    {{~#if (pathContentTypeSupported this)}}
+    {{#if summary}}
+    // <summary>
+    // {{summary}}
+    // </summary>
+    {{/if}}
+    {{#if description}}
+    // {{description}}
+    {{/if}}
+    {{#if tags}}
+    // <tags>{{tags}}</tags>
+    {{/if}}
+    {{#each _sortedParameters}}
+    // <param name="{{name}}">{{description}}</param>
+    {{/each}}
+    public {{safeTypeConvert _response.schema}} {{operationId}}(
+        {{~#each _sortedParameters ~}}
+            {{~safeTypeConvert schema}} {{toParamName name ~}}
+            {{~#unless @last}}, {{/unless ~}}
+        {{~/each ~}}
+    ) throws IOException{{#if (bodyParameterExists _sortedParameters)}}, JsonProcessingException{{/if}}{{#if (complexReturnType _response.schema)}}, JsonMappingException{{/if}}
+    {
+        {{createQueryStringSnippet _sortedParameters}}
+        var requestUri = _baseAddress.concat("{{setPathParameters @root.path _sortedParameters}}"){{#if (queryParametersExist _sortedParameters)}}.concat(queryString.toString()){{/if}};
+        {{#if (bodyParameterExists _sortedParameters)}}
+        ObjectMapper serMapper = new ObjectMapper(); 
+        String jsonBody = serMapper.writeValueAsString(body);
+        RequestBody httpBody = RequestBody.create(jsonBody, MediaType.parse("application/json; charset=utf-8"));
+        {{/if}}
+        Request request = new Request.Builder()
+            .url(requestUri)
+            {{#if (bodyParameterExists _sortedParameters)}}
+            {{queryTypeWithBody @key}}
+            {{else}}
+            {{{queryType @key}}}
+            {{/if}}
+            .build();
+        {{createHeaderParamsSnippet _sortedParameters}}
+        Call call = _client.newCall(request);
+        Response response = call.execute();
+
+        {{#if _response.schema}}
+        String responseBodyString = response.body().string();
+        {{createReturnStatement _response.schema}}
+        {{/if}}
+    }
+    {{else}}
+    public {{#if _response.schema}}{{safeTypeConvert _response.schema}}{{/if}} {{operationId}}({{#each _sortedParameters}}{{safeTypeConvert schema}} {{name}}{{#if schema.default}} = {{{quoteIfString schema.default}}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}) throws UnsupportedOperationException
+    {
+        throw new UnsupportedOperationException("Operation 'uploadFile' most likely does not support json encoded requests which are not supported by openapi forge.");
+    }    
+
+        {{/if}}
+        {{/ifEquals}}
+        {{/each}}  
+        {{/each}}
+
+}
