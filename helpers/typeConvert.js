@@ -3,29 +3,13 @@ const toSafeName = require("./toClassName");
 const fromFormat = (propFormat, shouldBox) => {
   switch (propFormat) {
     case "int32":
-      if (shouldBox) {
-        return "Integer";
-      } else {
-        return "int";
-      }
+      return shouldBox ? "Integer" : "int";
     case "int64":
-      if (shouldBox) {
-        return "Long";
-      } else {
-        return "long";
-      }
+      return shouldBox ? "Long" : "long";
     case "float":
-      if (shouldBox) {
-        return "Float";
-      } else {
-        return "float";
-      }
+      return shouldBox ? "Float" : "float";
     case "double":
-      if (shouldBox) {
-        return "Double";
-      } else {
-        return "double";
-      }
+      return shouldBox ? "Double" : "double";
     case "date":
     case "date-time":
       return "Date";
@@ -34,30 +18,18 @@ const fromFormat = (propFormat, shouldBox) => {
     case "string":
       return "String";
     default:
-      return "void"; // that's a change from c# to java
+      return "void";
   }
 };
 
 const fromType = (propType, additionalProperties, items, shouldBox) => {
   switch (propType) {
     case "integer":
-      if (shouldBox) {
-        return "Integer";
-      } else {
-        return "int";
-      }
+      return shouldBox ? "Integer" : "int";
     case "number":
-      if (shouldBox) {
-        return "Double";
-      } else {
-        return "double";
-      }
+      return shouldBox ? "Double" : "double";
     case "boolean":
-      if (shouldBox) {
-        return "Boolean";
-      } else {
-        return "boolean";
-      }
+      return shouldBox ? "Boolean" : "boolean";
     case "string":
       return "String";
     case "array":

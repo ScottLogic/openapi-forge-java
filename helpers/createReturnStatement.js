@@ -30,7 +30,6 @@ const createReturnStatement = (responseSchema) => {
       mapperStatements = `ObjectMapper deserMapper = new ObjectMapper();\n`;
       mapperStatements += `${responseType} ${toParamName(responseType)} = deserMapper.readValue(responseBodyString, ${mapperListHandle(responseType)});\n`
       returnStatement = toParamName(responseType);
-    // returnStatement = `JsonSerializer.Deserialize<${responseType}>(responseBody)`;
   }
 
   return new Handlebars.SafeString(mapperStatements + `return ${returnStatement};`);

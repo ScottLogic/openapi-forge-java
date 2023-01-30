@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.util.HashMap;
 
 
-/// <summary>
-/// {{_info.title}}
-/// </summary>
+// <summary>
+// {{_info.title}}
+// </summary>
 {{#if info.description}}{{docComment info.description}}{{/if}}
-{{#if info.version}}/// <version>{{info.version}}</version>{{/if}}
+{{#if info.version}}// <version>{{info.version}}</version>{{/if}}
 
     public interface IApiClient{{_tag.name}}
     {
@@ -22,18 +22,18 @@ import java.util.HashMap;
       {{#each this}}
       {{#ifEquals ../../_tag.name _tag.name}}
       {{#if summary}}
-      /// <summary>
-      /// {{summary}}
-      /// </summary>
+      // <summary>
+      // {{summary}}
+      // </summary>
       {{/if}}
       {{#if description}}
-      /// {{description}}
+      // {{description}}
       {{/if}}
       {{#if tags}}
-      /// <tags>{{tags}}</tags>
+      // <tags>{{tags}}</tags>
       {{/if}}
       {{#each _sortedParameters}}
-      /// <param name="{{name}}">{{description}}</param>
+      // <param name="{{name}}">{{description}}</param>
       {{/each}}
     public {{safeTypeConvert _response.schema}} {{operationId}}(
         {{~#each _sortedParameters ~}}

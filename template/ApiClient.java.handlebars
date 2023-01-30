@@ -30,18 +30,18 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     {{~#ifEquals ../../_tag.name _tag.name}}
     {{~#if (pathContentTypeSupported this)}}
     {{#if summary}}
-    /// <summary>
-    /// {{summary}}
-    /// </summary>
+    // <summary>
+    // {{summary}}
+    // </summary>
     {{/if}}
     {{#if description}}
-    /// {{description}}
+    // {{description}}
     {{/if}}
     {{#if tags}}
-    /// <tags>{{tags}}</tags>
+    // <tags>{{tags}}</tags>
     {{/if}}
     {{#each _sortedParameters}}
-    /// <param name="{{name}}">{{description}}</param>
+    // <param name="{{name}}">{{description}}</param>
     {{/each}}
     public {{safeTypeConvert _response.schema}} {{operationId}}(
         {{~#each _sortedParameters ~}}

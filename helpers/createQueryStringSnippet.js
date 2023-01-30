@@ -2,7 +2,7 @@ const Handlebars = require("handlebars");
 const toParamName = require("./toParamName");
 const getParametersByType = require("./getParametersByType");
 const newLine = "\n";
-// currently we don't have a working c# code formatter, so we need to use this hack
+// currently we don't have a working a code formatter, so we need to use this hack
 const indent = "            ";
 
 const isStringType = (typeDef) =>

@@ -8,14 +8,14 @@
       {{#each properties}}
 
         {{#if description}}
-        /// <value>
-        /// {{description}}
-        /// <value>
+        // <value>
+        // {{description}}
+        // <value>
         {{/if}}
         {{#if example}}
-        /// <example>
-        /// {{example}}
-        /// <example>
+        // <example>
+        // {{example}}
+        // <example>
         {{/if}}
         public {{{safeTypeConvert this}}} {{@key}};
         
