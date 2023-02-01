@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "description": "OpenAPI-Forge Java template",
   "apiTemplates": [
-    "ApiClient.java.handlebars",
-    "IApiClient.java.handlebars"
-
+    "src/main/java/com/example/springboot/ApiClient.java.handlebars",
+    "src/main/java/com/example/springboot/IApiClient.java.handlebars"
   ],
   "main": "index.js",
   "scripts": {
