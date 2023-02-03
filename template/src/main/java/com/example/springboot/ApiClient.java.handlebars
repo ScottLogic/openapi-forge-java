@@ -68,10 +68,11 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         {{createHeaderParamsSnippet _sortedParameters}}
         Call call = _client.newCall(request);
         Response response = call.execute();
-
         {{#if _response.schema}}
         String responseBodyString = response.body().string();
         {{createReturnStatement _response.schema}}
+        {{else}}
+        response.close();
         {{/if}}
     }
     {{else}}
@@ -79,10 +80,9 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     {
         throw new UnsupportedOperationException("Operation 'uploadFile' most likely does not support json encoded requests which are not supported by openapi forge.");
     }    
-
-        {{/if}}
-        {{/ifEquals}}
-        {{/each}}  
-        {{/each}}
+    {{/if}}
+    {{/ifEquals}}
+    {{/each}}  
+    {{/each}}
 
 }
