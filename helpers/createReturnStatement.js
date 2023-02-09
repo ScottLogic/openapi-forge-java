@@ -15,7 +15,7 @@ const createReturnStatement = (responseSchema) => {
   let mapperStatements = "";
   let returnStatement;
   switch (responseType) {
-    case "bool":
+    case "boolean":
     case "int":
     case "long":
     case "float":
@@ -23,7 +23,7 @@ const createReturnStatement = (responseSchema) => {
     case "Date":
       returnStatement = `${responseType}.Parse(responseBody)`;
       break;
-    case "string":
+    case "String":
       returnStatement = "responseBody";
       break;
     default:

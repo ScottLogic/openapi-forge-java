@@ -3,12 +3,12 @@ const typeConvert = require("./typeConvert");
 const complexReturnType = (responseSchema) => { 
     const responseType = typeConvert(responseSchema);
     switch (responseType) {
-        case "bool":
+        case "boolean":
         case "int":
         case "long":
         case "float":
         case "double":
-        case "string":
+        case "String":
             return false;
         case "Date":
         default:
