@@ -1,4 +1,4 @@
-const cli = require("prettier/cli.js");
+const prettier_cli = require("prettier/cli.js");
 
 const logLevels = [
     /* quiet */
@@ -10,5 +10,5 @@ const logLevels = [
   ];
   
   module.exports = (folder, logLevel) => {
-    return cli.run(["--write", folder, "--loglevel", logLevels[logLevel]]);
+    return prettier_cli.run(["--write", folder, "--loglevel", logLevels[logLevel]]);
   };
