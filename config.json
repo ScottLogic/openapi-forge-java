@@ -1,0 +1,6 @@
+{
+  "package": {
+    "default": "com.example.springboot",
+    "description": "The package for the generated classes."
+  }
+}
