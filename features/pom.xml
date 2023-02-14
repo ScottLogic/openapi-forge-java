@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>ApiClient</artifactId>
+	<artifactId>CucumberTests</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ApiClient</name>
 	<description>ApiClient for X</description>

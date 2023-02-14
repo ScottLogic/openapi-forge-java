@@ -2,13 +2,21 @@ package com.example.springboot;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 
 public class CommonDefinitions {
+  private final String javaGeneratorPath = "../";
+  private final String tempSchemaPath = "schema.json";
+  private final String cucumberTestsDirectory = "features/";
   @Given("an API with the following specification")
-  public void an_api_with_spec(String spec) {
-    System.err.println("Hello! It's a me, Mario!");
-    System.err.println(spec);
-    throw new io.cucumber.java.PendingException();
+  public void an_api_with_spec(String spec) throws IOException {
+    generateApi(spec);
   }
 
   @Then("the requested URL should be {word}")
@@ -16,4 +24,26 @@ public class CommonDefinitions {
     System.err.println(url);
     throw new io.cucumber.java.PendingException();
   }
+
+  private void generateApi(String spec) throws IOException {
+    writeToJsonFile(spec);
+    forgeApi();
+    getApiClientTypes();
+  }
+
+  private void writeToJsonFile(String spec) throws IOException {
+    List<String> lines = Collections.singletonList(spec);
+    Path file = Paths.get(tempSchemaPath);
+    Files.write(file, lines, StandardCharsets.UTF_8);
+  }
+
+  private void forgeApi() throws IOException {
+    Runtime rt = Runtime.getRuntime();
+    // BE REALLY CAREFUL, the next line will overwrite the pom!!!!
+//    Process pr = rt.exec(new String[]{"openapi-forge", "forge", cucumberTestsDirectory + tempSchemaPath, javaGeneratorPath, "-o", cucumberTestsDirectory});
+//    openapi-forge forge features/schema.json . -o features/ -l verbose
+//    System.err.println(pr.getOutputStream().toString());
+  }
+
+  private void getApiClientTypes() {}
 }
