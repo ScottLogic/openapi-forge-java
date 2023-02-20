@@ -60,7 +60,7 @@ public class CommonDefinitions {
           tempSchemaPath,
           "..",
           "--output",
-          "../temp",
+          "../features",
           "--exclude",
           "pom.xml",
           // In current version of openapi-forge, can only exclude one item
