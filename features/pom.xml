@@ -86,6 +86,14 @@
 			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<!-- To allow mockito to mock final methods -->
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>2.13.0</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- end::tests[] -->
 	</dependencies>
 

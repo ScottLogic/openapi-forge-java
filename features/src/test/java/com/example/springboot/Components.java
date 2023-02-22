@@ -3,13 +3,15 @@ package com.example.springboot;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.util.ArrayList;
 
 public class Components {
   @When("calling the method {word} and the server responds with")
   public void calling_method_server_responds(String method, String response) {
     System.err.println(method);
     System.err.println(response);
-    throw new io.cucumber.java.PendingException();
+    CommonDefinitions.callMethod(method, new ArrayList<>(), response);
+    //    throw new io.cucumber.java.PendingException();
   }
 
   @Then("the response should be of type {word}")
