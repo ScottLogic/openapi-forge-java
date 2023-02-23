@@ -22,6 +22,7 @@ import okhttp3.*;
 
 public class CommonDefinitions {
   private final String tempSchemaPath = "schema.json";
+  //  private final String packageName = this.getClass().getPackageName();
 
   boolean isWindows() {
     return System.getProperty("os.name").toLowerCase().contains("win");
@@ -60,7 +61,7 @@ public class CommonDefinitions {
     }
     String[] openApiForgeCommand =
         new String[] {
-          npxCommand,
+          npxCommand, // TODO: Add as peer dependency npm?
           "openapi-forge",
           "forge",
           tempSchemaPath,
@@ -96,38 +97,7 @@ public class CommonDefinitions {
       OkHttpClient mockHttp = mock(OkHttpClient.class);
       when(mockHttp.newCall(any())).thenReturn(mockCall);
       when(mockCall.execute()).thenReturn(mockResponse);
-      //      Request request = new Request.Builder()
-      //              .url(requestUri)
-      //
-      //              .build();
-      //      Request.Builder mockBuilder = mock(Request.Builder.class);
-      //      try (MockedConstruction<Request.Builder> ignored =
-      // mockConstruction(Request.Builder.class)) {
-      //        Request.Builder mockBuilder = new Request.Builder();
-      //        System.err.println(mockBuilder);
-      //        //        mockRequestBuilder.when(Request.Builder::new).thenReturn(mockBuilder); //
-      // TODO: Do
-      //        // we need PowerMockito here???
-      //        when(mockBuilder.url(anyString())).thenReturn(mockBuilder);
-      //        when(mockBuilder.build()).thenReturn(mock(Request.class));
-      //        //      try (MockedStatic<Request.Builder> mockRequestBuilder =
-      //        // mockStatic(Request.Builder.class)) {
-      //        //
-      //        //        mockRequestBuilder.when(Request.Builder::new).thenReturn(mockBuilder); //
-      // TODO: Do
-      //        // we need PowerMockito here???
-      //        //        when(mockBuilder.url(anyString())).thenReturn(mockBuilder);
-      //        //        when(mockBuilder.build()).thenReturn(mock(Request.class));
-      //        //      } catch (Exception e) {
-      //        //        e.printStackTrace();
-      //        //      }
-      //
-      //        //      Configuration configuration = new Configuration();
-      //        //      ApiClient httpClient = new ApiClient(mockHttp, configuration);
-      //
-      //      } catch (Exception e) {
-      //        e.printStackTrace();
-      //      }
+
       Class<?> configurationClass = Class.forName("com.example.springboot.Configuration");
       Class<?> apiClientClass = Class.forName("com.example.springboot.ApiClient");
 
