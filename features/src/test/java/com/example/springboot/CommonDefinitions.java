@@ -1,20 +1,16 @@
 package com.example.springboot;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import okhttp3.*;
 
 // @ExtendWith(MockitoExtension.class)
@@ -80,56 +76,4 @@ public class CommonDefinitions {
   }
 
   private void getApiClientTypes() {}
-
-  protected static Object callMethod(String methodName, List<Object> parameters, String response) {
-    return callMethod(methodName, parameters, response, 0);
-  }
-
-  protected static Object callMethod(
-      String methodName, List<Object> parameters, String response, int serverIndex) {
-    try {
-      System.out.println("start callMethod");
-      Response mockResponse = mock(Response.class);
-      ResponseBody mockResponseBody = mock(ResponseBody.class);
-      when(mockResponse.body()).thenReturn(mockResponseBody);
-      when(mockResponseBody.string()).thenReturn(response);
-      Call mockCall = mock(Call.class);
-      OkHttpClient mockHttp = mock(OkHttpClient.class);
-      when(mockHttp.newCall(any())).thenReturn(mockCall);
-      when(mockCall.execute()).thenReturn(mockResponse);
-
-      Class<?> configurationClass = Class.forName("com.example.springboot.Configuration");
-      Class<?> apiClientClass = Class.forName("com.example.springboot.ApiClient");
-
-      Object configuration = configurationClass.getDeclaredConstructor().newInstance();
-      Method setBasePath = configurationClass.getDeclaredMethod("setBasePath", String.class);
-      setBasePath.invoke(configuration, "https://todoBasePath");
-      Method setSelectedServerIndex =
-          configurationClass.getDeclaredMethod("setSelectedServerIndex", int.class);
-      setSelectedServerIndex.invoke(configuration, 0);
-      Method setServers = configurationClass.getDeclaredMethod("setServers", List.class);
-      setServers.invoke(configuration, List.of("todoServer0"));
-
-      System.err.println(
-          Arrays.stream(
-                  configurationClass.getDeclaredConstructor().newInstance().getClass().getMethods())
-              .collect(Collectors.toList()));
-      System.err.println(((Configuration) configuration).getBaseAddress());
-      Object apiClient =
-          apiClientClass
-              .getDeclaredConstructor(OkHttpClient.class, configurationClass)
-              .newInstance(mockHttp, configuration);
-
-      Method method = apiClientClass.getDeclaredMethod(methodName);
-      Object objectResponse = method.invoke(apiClient);
-      System.out.println("end callMethod");
-      System.out.println(objectResponse);
-      return objectResponse;
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      //      System.err.println();
-    }
-    return null;
-  }
 }
