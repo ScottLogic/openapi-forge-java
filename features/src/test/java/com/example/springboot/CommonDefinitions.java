@@ -2,6 +2,7 @@ package com.example.springboot;
 
 import static org.mockito.Mockito.*;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import java.io.IOException;
@@ -58,7 +59,8 @@ public class CommonDefinitions {
     String[] openApiForgeCommand =
         new String[] {
           npxCommand, // TODO: Add as peer dependency npm?
-          "openapi-forge",
+          //          "openapi-forge",
+          "../../openapi-forge/src/index.js",
           "forge",
           tempSchemaPath,
           "..",
@@ -72,8 +74,31 @@ public class CommonDefinitions {
           //            "mvnw*",
           //            "*.md"
         };
-    runtime.exec(openApiForgeCommand);
+    Process process = runtime.exec(openApiForgeCommand);
+    try {
+      process.waitFor();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void getApiClientTypes() {}
+
+  // TODO: Change to @After. Currently have @Before so we can see the output of the last test run.
+  @Before
+  public void tearDownGeneratedFiles() {
+    //    File mainFolder = new File("src/main/java/");
+    //    try {
+    //      FileUtils.deleteDirectory(mainFolder);
+    //    } catch (IOException e) {
+    //      e.printStackTrace();
+    //    }
+    //
+    //    File targetFolder = new File("target/");
+    //    try {
+    //      FileUtils.deleteDirectory(targetFolder);
+    //    } catch (IOException e) {
+    //      e.printStackTrace();
+    //    }
+  }
 }

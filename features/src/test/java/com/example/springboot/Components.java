@@ -2,10 +2,13 @@ package com.example.springboot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Components {
   private Object latestResponse;
@@ -14,10 +17,8 @@ public class Components {
 
   @When("calling the method {word} and the server responds with")
   public void calling_method_server_responds(String method, String response) {
-    System.err.println(method);
-    System.err.println(response);
+    // Prepare for later steps:
     latestResponse = methodCallHandler.callMethod(method, new ArrayList<>(), response);
-    //    throw new io.cucumber.java.PendingException();
   }
 
   @Then("the response should be of type {word}")
@@ -33,10 +34,17 @@ public class Components {
     assertEquals(propValue, actualProp);
   }
 
-  @When("calling the method {word} with")
+  @When("calling the method {word} with parameters {string}")
   public void calling_the_method_with(String method, String rawParameters) {
     System.err.println(method);
     System.err.println(rawParameters);
-    throw new io.cucumber.java.PendingException();
+    List<String> parameters = Arrays.stream(rawParameters.split(",")).toList();
+    methodCallHandler.callMethod(method, parameters, null);
+  }
+
+  @After
+  public void after() {
+    latestResponse = null;
+    latestResponseType = null;
   }
 }

@@ -16,12 +16,12 @@ import org.springframework.util.StringUtils;
 public class MethodCallHandler {
   private final String packageName = this.getClass().getPackageName();
 
-  protected Object callMethod(String methodName, List<Object> parameters, String response) {
+  protected Object callMethod(String methodName, List<?> parameters, String response) {
     return callMethod(methodName, parameters, response, 0);
   }
 
   protected Object callMethod(
-      String methodName, List<Object> parameters, String response, int serverIndex) {
+      String methodName, List<?> parameters, String response, int serverIndex) {
     try {
       Response mockResponse = mock(Response.class);
       ResponseBody mockResponseBody = mock(ResponseBody.class);
@@ -50,7 +50,13 @@ public class MethodCallHandler {
               .newInstance(mockHttp, configuration);
 
       Method method = apiClientClass.getDeclaredMethod(methodName);
+      ////
+      //      Class<?>[] parameterClasses = method.getParameterTypes();
+      //      Map<Class, >
+
+      ////
       Object objectResponse = method.invoke(apiClient);
+      //      Object objectResponse = method.invoke(apiClient, parameters.toArray());
       return objectResponse;
 
     } catch (Exception e) {
