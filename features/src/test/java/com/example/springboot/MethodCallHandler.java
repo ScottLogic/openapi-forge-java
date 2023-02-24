@@ -32,8 +32,10 @@ public class MethodCallHandler {
       when(mockHttp.newCall(any())).thenReturn(mockCall);
       when(mockCall.execute()).thenReturn(mockResponse);
 
-      Class<?> configurationClass = Class.forName(packageName + ".Configuration");
-      Class<?> apiClientClass = Class.forName(packageName + ".ApiClient");
+      Class<?> configurationClass =
+          Class.forName(packageName + ".Configuration", true, this.getClass().getClassLoader());
+      Class<?> apiClientClass =
+          Class.forName(packageName + ".ApiClient", true, this.getClass().getClassLoader());
 
       Object configuration = configurationClass.getDeclaredConstructor().newInstance();
       Method setBasePath = configurationClass.getDeclaredMethod("setBasePath", String.class);

@@ -59,13 +59,14 @@ public class CommonDefinitions {
     String[] openApiForgeCommand =
         new String[] {
           npxCommand, // TODO: Add as peer dependency npm?
-          //          "openapi-forge",
-          "../../openapi-forge/src/index.js",
+          "openapi-forge",
+          //          "node", // Only needed when running openapi-forge from relative path
+          //          "../../openapi-forge/src/index.js",
           "forge",
           tempSchemaPath,
           "..",
           "--output",
-          "../features",
+          "../features", // ".."???
           "--exclude",
           "pom.xml",
           // In current version of openapi-forge, can only exclude one item
@@ -100,5 +101,7 @@ public class CommonDefinitions {
     //    } catch (IOException e) {
     //      e.printStackTrace();
     //    }
+
+    // TODO: Also remove schema.json
   }
 }
