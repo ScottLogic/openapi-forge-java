@@ -1,10 +1,9 @@
 package com.example.springboot;
 
-import static org.mockito.Mockito.*;
-
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import okhttp3.*;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 // @ExtendWith(MockitoExtension.class)
 // @PrepareForTest(Request.Builder.class)
@@ -59,9 +58,9 @@ public class CommonDefinitions {
     String[] openApiForgeCommand =
         new String[] {
           npxCommand, // TODO: Add as peer dependency npm?
-          "openapi-forge",
-          //          "node", // Only needed when running openapi-forge from relative path
-          //          "../../openapi-forge/src/index.js",
+          //          "openapi-forge",
+          "node", // Only needed when running openapi-forge from relative path
+          "../../openapi-forge/src/index.js",
           "forge",
           tempSchemaPath,
           "..",
@@ -75,9 +74,11 @@ public class CommonDefinitions {
           //            "mvnw*",
           //            "*.md"
         };
+    // TODO: Can we get the names of all files generated to be returned with the exit code?
     Process process = runtime.exec(openApiForgeCommand);
     try {
       process.waitFor();
+      System.err.println("end generate");
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -88,20 +89,25 @@ public class CommonDefinitions {
   // TODO: Change to @After. Currently have @Before so we can see the output of the last test run.
   @Before
   public void tearDownGeneratedFiles() {
-    //    File mainFolder = new File("src/main/java/");
-    //    try {
-    //      FileUtils.deleteDirectory(mainFolder);
-    //    } catch (IOException e) {
-    //      e.printStackTrace();
-    //    }
-    //
-    //    File targetFolder = new File("target/");
-    //    try {
-    //      FileUtils.deleteDirectory(targetFolder);
-    //    } catch (IOException e) {
-    //      e.printStackTrace();
-    //    }
+    deleteDirectory("src/main/java/");
+    deleteDirectory("target/");
+    deleteFile(tempSchemaPath);
+  }
 
-    // TODO: Also remove schema.json
+  private void deleteDirectory(String pathRelativeToPom) {
+    File directory = new File(pathRelativeToPom);
+    try {
+      FileUtils.deleteDirectory(directory);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void deleteFile(String pathRelativeToPom) {
+    File fileOrDirectory = new File(pathRelativeToPom);
+    if (!fileOrDirectory.delete()) {
+      System.err.println("Failed to delete: " + pathRelativeToPom);
+    }
+    ;
   }
 }

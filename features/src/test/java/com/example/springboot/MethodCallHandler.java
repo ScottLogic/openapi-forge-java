@@ -4,9 +4,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -32,10 +37,72 @@ public class MethodCallHandler {
       when(mockHttp.newCall(any())).thenReturn(mockCall);
       when(mockCall.execute()).thenReturn(mockResponse);
 
+      // Compile source file.
+      JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+      File srcMain = new File("src/main/java/" + packageName.replaceAll("\\.", "/"));
+      File[] filesInSrcMain = srcMain.listFiles();
+      if (filesInSrcMain != null) {
+        String[] filePaths = new String[filesInSrcMain.length];
+        for (int i = 0; i < filesInSrcMain.length; i++) {
+          filePaths[i] = filesInSrcMain[i].getPath();
+          System.err.println("compiling " + filePaths[i]);
+        }
+        compiler.run(null, null, null, filePaths);
+      }
+
+      //      /////////////
+      //      Runtime runtime = Runtime.getRuntime();
+      //      String[] javacCommand = new String[] {"javac", "src/main/java/**/*.java"};
+      //      // TODO: Can we get the names of all files generated to be returned with the exit
+      // code?
+      //      Process process = runtime.exec(javacCommand);
+      //      try {
+      //        process.waitFor();
+      //      } catch (InterruptedException e) {
+      //        throw new RuntimeException(e);
+      //      }
+      //      //////////////
+
+      //      File configurationFile =
+      //          new File("src/main/java/" + packageName.replaceAll("\\.", "/") +
+      // "/Configuration.java");
+      //      File apiClientFile =
+      //          new File("src/main/java/" + packageName.replaceAll("\\.", "/") +
+      // "/ApiClient.java");
+      //      File apiModelFile =
+      //          new File("src/main/java/" + packageName.replaceAll("\\.", "/") +
+      // "/ApiModel.java");
+      //      File applicationFile =
+      //          new File("src/main/java/" + packageName.replaceAll("\\.", "/") +
+      // "/Application.java");
+      //      File iApiClientFile =
+      //          new File("src/main/java/" + packageName.replaceAll("\\.", "/") +
+      // "/IApiClient.java");
+      //      File allFiles = new File("src/main/java/" + packageName.replaceAll("\\.", "/") +
+      // "/*.java");
+      //
+      //      System.err.println(configurationFile.getCanonicalPath());
+      //      compiler.run(
+      //          null,
+      //          null,
+      //          null,
+      //          configurationFile.getPath(),
+      //          apiClientFile.getPath(),
+      //          apiModelFile.getPath(),
+      //          iApiClientFile.getPath(),
+      //          applicationFile.getPath());
+      //      compiler.run(null, null, null, apiClientFile.getPath());
+      //      compiler.run(null, null, null, apiModelFile.getPath());
+      //      compiler.run(null, null, null, allFiles.getPath());
+
+      // Load and instantiate compiled class.
+      File root = new File("src/main/java/");
+      System.err.println(root.getCanonicalPath());
+      URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {root.toURI().toURL()});
+
       Class<?> configurationClass =
-          Class.forName(packageName + ".Configuration", true, this.getClass().getClassLoader());
-      Class<?> apiClientClass =
-          Class.forName(packageName + ".ApiClient", true, this.getClass().getClassLoader());
+          Class.forName(packageName + ".Configuration", true, classLoader);
+      Class<?> apiClientClass = Class.forName(packageName + ".ApiClient", true, classLoader);
 
       Object configuration = configurationClass.getDeclaredConstructor().newInstance();
       Method setBasePath = configurationClass.getDeclaredMethod("setBasePath", String.class);
