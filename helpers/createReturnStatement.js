@@ -24,7 +24,7 @@ const createReturnStatement = (responseSchema) => {
       returnStatement = `${responseType}.Parse(responseBody)`;
       break;
     case "String":
-      returnStatement = "responseBody";
+      returnStatement = "responseBodyString";
       break;
     default:
       mapperStatements = `ObjectMapper deserMapper = new ObjectMapper();\n`;
