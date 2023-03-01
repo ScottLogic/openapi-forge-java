@@ -8,7 +8,7 @@ const mapperListHandle = (responseType) => {
   } else {
     return `${responseType}.class`;
   }
-}
+};
 
 const createReturnStatement = (responseSchema) => {
   const responseType = typeConvert(responseSchema);
@@ -28,11 +28,17 @@ const createReturnStatement = (responseSchema) => {
       break;
     default:
       mapperStatements = `ObjectMapper deserMapper = new ObjectMapper();\n`;
-      mapperStatements += `${responseType} ${toParamName(responseType)} = deserMapper.readValue(responseBodyString, ${mapperListHandle(responseType)});\n`
+      mapperStatements += `${responseType} ${toParamName(
+        responseType
+      )} = deserMapper.readValue(responseBodyString, ${mapperListHandle(
+        responseType
+      )});\n`;
       returnStatement = toParamName(responseType);
   }
 
-  return new Handlebars.SafeString(mapperStatements + `return ${returnStatement};`);
+  return new Handlebars.SafeString(
+    mapperStatements + `return ${returnStatement};`
+  );
 };
 
 module.exports = createReturnStatement;
