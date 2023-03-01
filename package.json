@@ -43,7 +43,8 @@
     "husky": "^8.0.1",
     "path": "^0.12.7",
     "prettier": "^2.7.1",
-    "semantic-release": "^19.0.5"
+    "semantic-release": "^19.0.5",
+    "shelljs": "^0.8.5"
   },
   "engines": {
     "node": ">=16.0.0"
