@@ -16,7 +16,13 @@ const isStringArrayParam = (param) =>
 
 const serialiseArrayParam = (param) => {
   const safeParamName = toParamName(param.name);
-  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p -> "${param.name}=".concat(${isStringArrayParam(param) ? 'java.net.URLEncoder.encode(p, StandardCharsets.UTF_8)' : 'p'} )).collect(Collectors.toList()))`;
+  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p -> "${
+    param.name
+  }=".concat(${
+    isStringArrayParam(param)
+      ? "java.net.URLEncoder.encode(p, StandardCharsets.UTF_8)"
+      : "p"
+  } )).collect(Collectors.toList()))`;
 
   return `${indent}if (${safeParamName} != null && ${safeParamName}.size() > 0)
 ${indent}{
@@ -45,17 +51,12 @@ const serialisePrimitive = (param) => {
   const safeParamName = toParamName(param.name);
   const escaped = isStringType(param.schema)
     ? `java.net.URLEncoder.encode(${safeParamName}, StandardCharsets.UTF_8)`
-    : safeParamName;
+    : "String.valueOf(" + safeParamName + ")";
 
   const serialisedParam = prefixSerialisedQueryParam(
     `"${param.name}=".concat(${escaped})`
   );
-  return param._optional
-    ? `${indent}if (${safeParamName} != null)
-${indent}{
-    ${serialisedParam}
-${indent}}`
-    : serialisedParam;
+  return serialisedParam;
 };
 
 const prefixSerialisedQueryParam = (serialisedQueryParam) =>
