@@ -1,6 +1,5 @@
 package com.example.springboot;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,23 +8,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.List;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okhttp3.*;
+import org.mockito.ArgumentCaptor;
 import org.springframework.util.StringUtils;
 
 public class MethodCallHandler {
   private final String packageName = this.getClass().getPackageName();
 
-  protected Object callMethod(String methodName, List<?> parameters, String response) {
+  protected MethodResponse callMethod(String methodName, List<?> parameters, String response) {
     return callMethod(methodName, parameters, response, 0);
   }
 
-  protected Object callMethod(
+  protected MethodResponse callMethod(
       String methodName, List<?> parameters, String response, int serverIndex) {
     try {
       Response mockResponse = mock(Response.class);
@@ -34,7 +32,8 @@ public class MethodCallHandler {
       when(mockResponseBody.string()).thenReturn(response);
       Call mockCall = mock(Call.class);
       OkHttpClient mockHttp = mock(OkHttpClient.class);
-      when(mockHttp.newCall(any())).thenReturn(mockCall);
+      ArgumentCaptor<Request> argumentCaptor = ArgumentCaptor.forClass(Request.class);
+      when(mockHttp.newCall(argumentCaptor.capture())).thenReturn(mockCall);
       when(mockCall.execute()).thenReturn(mockResponse);
 
       // Compile source file.
@@ -118,15 +117,43 @@ public class MethodCallHandler {
               .getDeclaredConstructor(OkHttpClient.class, configurationClass)
               .newInstance(mockHttp, configuration);
 
-      Method method = apiClientClass.getDeclaredMethod(methodName);
+      System.err.println("Parameters:");
+      for (var param : parameters.toArray()) {
+        System.err.println(param);
+      }
+      List<Class> classList = parameters.stream().map(param -> (Class) param.getClass()).toList();
+      Class[] classes = classList.toArray(new Class[0]);
+      for (var param : parameters.toArray()) {
+        System.err.println(param.getClass());
+      }
+      // Doesn't account for params:
+      //      Method method = apiClientClass.getDeclaredMethod(methodName, classes);
+
+      Method[] allMethods = apiClientClass.getDeclaredMethods();
+      Method methodWithParameters =
+          Arrays.stream(allMethods)
+              .filter(m -> m.getName().equals(methodName))
+              .findFirst()
+              .orElseThrow();
+      Class<?>[] parameterTypes = methodWithParameters.getParameterTypes();
+      //      Object[]
+      //      for
+
+      ///// TODO: Get method with given name and cast my string parameters to the types expected. We
+      // assume that there
+      ///// will only be one of each method name (no overloaded methods).
+
       ////
       //      Class<?>[] parameterClasses = method.getParameterTypes();
       //      Map<Class, >
 
       ////
-      Object objectResponse = method.invoke(apiClient);
-      //      Object objectResponse = method.invoke(apiClient, parameters.toArray());
-      return objectResponse;
+      //      Object objectResponse = method.invoke(apiClient);
+
+      System.err.println(methodWithParameters.getName());
+      Object objectResponse = methodWithParameters.invoke(apiClient, "cat", 2);
+      //      Object objectResponse = methodWithParameters.invoke(apiClient, parameters.toArray());
+      return new MethodResponse(objectResponse, argumentCaptor.getValue().url().toString());
 
     } catch (Exception e) {
       e.printStackTrace();

@@ -2,7 +2,6 @@ package com.example.springboot;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,11 +28,11 @@ public class CommonDefinitions {
     generateApi(spec);
   }
 
-  @Then("the requested URL should be {word}")
-  public void requested_url(String url) {
-    System.err.println(url);
-    throw new io.cucumber.java.PendingException();
-  }
+  //  @Then("the requested URL should be {word}")
+  //  public void requested_url(String url) {
+  //    System.err.println(url);
+  //    throw new io.cucumber.java.PendingException();
+  //  }
 
   private void generateApi(String spec) throws IOException {
     writeToJsonFile(spec);
