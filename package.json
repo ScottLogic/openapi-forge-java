@@ -44,7 +44,8 @@
     "path": "^0.12.7",
     "prettier": "^2.7.1",
     "prettier-plugin-java": "^2.0.0",
-    "semantic-release": "^19.0.5"
+    "semantic-release": "^19.0.5",
+    "shelljs": "^0.8.5"
   },
   "engines": {
     "node": ">=16.0.0"
