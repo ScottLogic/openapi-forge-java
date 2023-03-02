@@ -36,8 +36,12 @@ module.exports = (folder) => {
             .children.typeIdentifier[0].children.Identifier[0].image;
         class_start = cls.location.startOffset;
         class_end = cls.location.endOffset;
+        // make the inner class public as well
         class_txt =
-          class_prefix + data.substring(class_start, class_end + 1) + "\n";
+          class_prefix +
+          " public " +
+          data.substring(class_start, class_end + 1) +
+          "\n";
         fs.writeFileSync(folder + "/" + class_name + ".java", class_txt);
       }
     );
