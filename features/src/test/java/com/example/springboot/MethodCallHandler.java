@@ -21,6 +21,7 @@ public class MethodCallHandler {
   private final String basePath = "https://example.com/";
   private final String server0 = "api/v3";
   private final TypeConverter typeConverter;
+  private ClassLoader classLoader;
 
   MethodCallHandler(TypeConverter typeConverter) {
     this.typeConverter = typeConverter;
@@ -105,10 +106,12 @@ public class MethodCallHandler {
       File root = new File("src/main/java/");
       System.err.println(root.getCanonicalPath());
       URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {root.toURI().toURL()});
+      this.classLoader = classLoader;
 
       Class<?> configurationClass =
           Class.forName(packageName + ".Configuration", true, classLoader);
       Class<?> apiClientClass = Class.forName(packageName + ".ApiClient", true, classLoader);
+      //      Class.forName(packageName + ".ObjectResponse", true, classLoader);
 
       Object configuration = configurationClass.getDeclaredConstructor().newInstance();
       Method setBasePath = configurationClass.getDeclaredMethod("setBasePath", String.class);
@@ -186,8 +189,9 @@ public class MethodCallHandler {
   public String getPropertyOnObject(
       String propName, Object latestResponse, String latestResponseType) {
     try {
-      Class<?> propClass = Class.forName(packageName + "." + latestResponseType);
+      Class<?> propClass = Class.forName(packageName + "." + latestResponseType, true, classLoader);
       Method getProp = propClass.getDeclaredMethod("get" + StringUtils.capitalize(propName));
+      getProp.setAccessible(true); // Otherwise causes IllegalAccessException.
       return getProp.invoke(latestResponse).toString();
     } catch (ClassNotFoundException
         | NoSuchMethodException
