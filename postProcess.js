@@ -1,8 +1,8 @@
 const shell = require("shelljs");
-const model_hack = require("./postProcessModel");
+const model_fix = require("./postProcessModel");
 
 module.exports = (folder, _, options) => {
-  model_hack(folder);
+  model_fix(folder);
   var package_name = options["generator.package"];
   var package_folder = package_name.replaceAll(".", "/");
   java_path = "src/main/java/" + package_folder;

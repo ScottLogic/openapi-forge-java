@@ -38,19 +38,10 @@ module.exports = (folder) => {
         class_end = cls.location.endOffset;
         class_txt =
           class_prefix + data.substring(class_start, class_end + 1) + "\n";
-        try {
-          fs.writeFileSync(folder + "/" + class_name + ".java", class_txt);
-        } catch (err) {
-          console.log(err);
-        }
+        fs.writeFileSync(folder + "/" + class_name + ".java", class_txt);
       }
     );
-
-    try {
-      fs.rmSync(model_file);
-    } catch (err) {
-      console.log(err);
-    }
+    fs.rmSync(model_file);
   } catch (err) {
     console.log(err);
   }
