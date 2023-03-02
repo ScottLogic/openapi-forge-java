@@ -1,6 +1,8 @@
 const toSafeName = require("./toClassName");
 
-const fromFormat = (propFormat, shouldBox) => {
+const fromFormat = (propFormat /*, shouldBox */) => {
+  // We need to box everything for the Cucumber tests.
+  const shouldBox = true;
   switch (propFormat) {
     case "int32":
       return shouldBox ? "Integer" : "int";
@@ -22,7 +24,9 @@ const fromFormat = (propFormat, shouldBox) => {
   }
 };
 
-const fromType = (propType, additionalProperties, items, shouldBox) => {
+const fromType = (propType, additionalProperties, items /* , shouldBox */) => {
+  // We need to box everything for the Cucumber tests.
+  const shouldBox = true;
   switch (propType) {
     case "integer":
       return shouldBox ? "Integer" : "int";

@@ -13,7 +13,7 @@ import java.util.List;
 public class Components {
   private MethodResponse latestResponse;
   private String latestResponseType;
-  private MethodCallHandler methodCallHandler = new MethodCallHandler();
+  private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
 
   @When("calling the method {word} and the server responds with")
   public void calling_method_server_responds(String method, String response) {

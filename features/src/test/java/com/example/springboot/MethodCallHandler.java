@@ -18,13 +18,20 @@ import org.springframework.util.StringUtils;
 
 public class MethodCallHandler {
   private final String packageName = this.getClass().getPackageName();
+  private final String basePath = "https://example.com/";
+  private final String server0 = "api/v3";
+  private final TypeConverter typeConverter;
 
-  protected MethodResponse callMethod(String methodName, List<?> parameters, String response) {
+  MethodCallHandler(TypeConverter typeConverter) {
+    this.typeConverter = typeConverter;
+  }
+
+  protected MethodResponse callMethod(String methodName, List<String> parameters, String response) {
     return callMethod(methodName, parameters, response, 0);
   }
 
   protected MethodResponse callMethod(
-      String methodName, List<?> parameters, String response, int serverIndex) {
+      String methodName, List<String> parameters, String response, int serverIndex) {
     try {
       Response mockResponse = mock(Response.class);
       ResponseBody mockResponseBody = mock(ResponseBody.class);
@@ -105,27 +112,30 @@ public class MethodCallHandler {
 
       Object configuration = configurationClass.getDeclaredConstructor().newInstance();
       Method setBasePath = configurationClass.getDeclaredMethod("setBasePath", String.class);
-      setBasePath.invoke(configuration, "https://todoBasePath");
+      setBasePath.invoke(configuration, basePath);
       Method setSelectedServerIndex =
           configurationClass.getDeclaredMethod("setSelectedServerIndex", int.class);
       setSelectedServerIndex.invoke(configuration, 0);
       Method setServers = configurationClass.getDeclaredMethod("setServers", List.class);
-      setServers.invoke(configuration, List.of("todoServer0"));
+      setServers.invoke(configuration, List.of(server0));
 
       Object apiClient =
           apiClientClass
               .getDeclaredConstructor(OkHttpClient.class, configurationClass)
               .newInstance(mockHttp, configuration);
 
-      System.err.println("Parameters:");
-      for (var param : parameters.toArray()) {
-        System.err.println(param);
-      }
-      List<Class> classList = parameters.stream().map(param -> (Class) param.getClass()).toList();
-      Class[] classes = classList.toArray(new Class[0]);
-      for (var param : parameters.toArray()) {
-        System.err.println(param.getClass());
-      }
+      //      System.err.println("Parameters:");
+      //      for (var param : parameters.toArray()) {
+      //        System.err.println(param);
+      //      }
+      //      List<Class> classList = parameters.stream().map(param -> (Class)
+      // param.getClass()).toList();
+      //      Class[] classes = classList.toArray(new Class[0]);
+      //      Object[] castParameters = new Object[parameters.size()];
+      //      for (var param : parameters.toArray()) {
+      //        System.err.println(param.getClass());
+      //      }
+
       // Doesn't account for params:
       //      Method method = apiClientClass.getDeclaredMethod(methodName, classes);
 
@@ -135,7 +145,12 @@ public class MethodCallHandler {
               .filter(m -> m.getName().equals(methodName))
               .findFirst()
               .orElseThrow();
-      Class<?>[] parameterTypes = methodWithParameters.getParameterTypes();
+      //      Class<?>[] parameterTypes = methodWithParameters.getParameterTypes();
+      //      for (int i = 0; i < parameters.size(); i++) {
+      //        castParameters[i] = parameterTypes[i].cast(parameters.toArray()[i]);
+      //        System.err.println(castParameters[i]);
+      //        System.err.println(castParameters[i].getClass());
+      //      }
       //      Object[]
       //      for
 
@@ -148,15 +163,22 @@ public class MethodCallHandler {
       //      Map<Class, >
 
       ////
-      //      Object objectResponse = method.invoke(apiClient);
+      //      Object objectResponse = methodWithParameters.invoke(apiClient);
 
-      System.err.println(methodWithParameters.getName());
-      Object objectResponse = methodWithParameters.invoke(apiClient, "cat", 2);
-      //      Object objectResponse = methodWithParameters.invoke(apiClient, parameters.toArray());
+      //      System.err.println(methodWithParameters.getName());
+      //      Object objectResponse = methodWithParameters.invoke(apiClient, "cat", 2); // TODO
+      // don't hardcode!
+      Object[] convertedParameters =
+          typeConverter.convertBoxedTypes(
+              parameters.toArray(new String[0]), methodWithParameters.getParameterTypes());
+      Object objectResponse =
+          methodWithParameters.invoke(
+              apiClient, convertedParameters); // ONLY WORKS WITH BOXED VALUES
       return new MethodResponse(objectResponse, argumentCaptor.getValue().url().toString());
 
     } catch (Exception e) {
       e.printStackTrace();
+      // TODO Throw here.
     }
     return null;
   }
