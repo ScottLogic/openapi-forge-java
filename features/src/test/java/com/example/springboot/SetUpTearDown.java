@@ -12,29 +12,19 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
-// @ExtendWith(MockitoExtension.class)
-// @PrepareForTest(Request.Builder.class)
-
-public class CommonDefinitions {
+public class SetUpTearDown {
   private final String tempSchemaPath = "schema.json";
-  //  private final String packageName = this.getClass().getPackageName();
 
   boolean isWindows() {
     return System.getProperty("os.name").toLowerCase().contains("win");
   }
 
   @Given("an API with the following specification")
-  public void an_api_with_spec(String spec) throws IOException {
+  public void an_api_with_spec(String spec) throws IOException, InterruptedException {
     generateApi(spec);
   }
 
-  //  @Then("the requested URL should be {word}")
-  //  public void requested_url(String url) {
-  //    System.err.println(url);
-  //    throw new io.cucumber.java.PendingException();
-  //  }
-
-  private void generateApi(String spec) throws IOException {
+  private void generateApi(String spec) throws IOException, InterruptedException {
     writeToJsonFile(spec);
     forgeApi();
     getApiClientTypes();
@@ -46,7 +36,7 @@ public class CommonDefinitions {
     Files.write(file, lines, StandardCharsets.UTF_8);
   }
 
-  private void forgeApi() throws IOException {
+  private void forgeApi() throws IOException, InterruptedException {
     Runtime runtime = Runtime.getRuntime();
     String npxCommand;
     if (isWindows()) {
@@ -75,12 +65,7 @@ public class CommonDefinitions {
         };
     // TODO: Can we get the names of all files generated to be returned with the exit code?
     Process process = runtime.exec(openApiForgeCommand);
-    try {
-      process.waitFor();
-      System.err.println("end generate");
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    process.waitFor();
   }
 
   private void getApiClientTypes() {}

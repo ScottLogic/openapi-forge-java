@@ -2,7 +2,7 @@ package com.example.springboot;
 
 import io.cucumber.java.en.When;
 
-public class ConfigurationTest {
+public class ConfigurationFeature {
   @When("calling the method {word} without params)")
   public void calling_the_method_without(String method) {
     System.err.println(method);

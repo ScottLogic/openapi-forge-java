@@ -3,7 +3,7 @@ package com.example.springboot;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class CookieParams {
+public class CookieParamsFeature {
   @When("calling the method cookieParameters with parameters {string}}")
   public void calling_the_method_with_cookie_parameters(String rawParameters) {
     // TODO: Will this always be "parameters" and "cookieParameters"?

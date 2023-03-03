@@ -3,7 +3,7 @@ package com.example.springboot;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class Model {
+public class ModelFeature {
   @When("generating an API from the following specification")
   public void generating_an_api_from_the_following_specification(String docString) {
     // Write code here that turns the phrase above into concrete actions

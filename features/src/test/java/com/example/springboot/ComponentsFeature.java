@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Components {
+public class ComponentsFeature {
   private MethodResponse latestResponse;
   private String latestResponseType;
   private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
