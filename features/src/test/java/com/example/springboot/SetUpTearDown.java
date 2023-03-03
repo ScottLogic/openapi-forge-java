@@ -1,6 +1,6 @@
 package com.example.springboot;
 
-import io.cucumber.java.Before;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import java.io.File;
 import java.io.IOException;
@@ -70,8 +70,12 @@ public class SetUpTearDown {
 
   private void getApiClientTypes() {}
 
-  // TODO: Change to @After. Currently have @Before so we can see the output of the last test run.
-  @Before
+  // Although theoretically we could switch @After for @Before here for debugging purposes, it can cause failures.
+  // There seems to be a difference between files on the classpath at compile time and files dynamically added to
+  // the classpath. If there are any files in the main package at the test of `mvn test`, these will
+  // not be purged fully by this teardown. There may be a fix for this, but it doesn't seem worth it
+  // unless further problems show down the line...
+  @After
   public void tearDownGeneratedFiles() {
     deleteDirectory("src/main/java/");
     deleteDirectory("target/");
@@ -92,6 +96,5 @@ public class SetUpTearDown {
     if (!fileOrDirectory.delete()) {
       System.err.println("Failed to delete: " + pathRelativeToPom);
     }
-    ;
   }
 }
