@@ -29,6 +29,14 @@ public class MethodCallHandler {
     this.typeConverter = typeConverter;
   }
 
+  protected MethodResponse callMethod(String methodName, List<String> parameters)
+      throws RuntimeException {
+    // Putting null without quotes here is incorrect! We're just trying to keep the JSON
+    // serialiser/deserialiser
+    // happy with our mocks.
+    return callMethod(methodName, parameters, "null", 0);
+  }
+
   protected MethodResponse callMethod(String methodName, List<String> parameters, String response)
       throws RuntimeException {
     return callMethod(methodName, parameters, response, 0);

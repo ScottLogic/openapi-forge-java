@@ -37,14 +37,15 @@ public class ComponentsFeature {
 
   @When("calling the method {word} with parameters {string}")
   public void calling_the_method_with(String method, String rawParameters) {
-    System.err.println(method);
-    System.err.println(rawParameters);
+    //    System.err.println(method);
+    //    System.err.println(rawParameters);
     List<String> parameters = Arrays.stream(rawParameters.split(",")).toList();
-    latestResponse =
-        methodCallHandler.callMethod(
-            method,
-            parameters,
-            "null"); // TODO putting null without quotes here is incorrect, so make it clearer!
+    latestResponse = methodCallHandler.callMethod(method, parameters);
+  }
+
+  @When("calling the method {word} without params")
+  public void calling_the_method_without(String method) {
+    latestResponse = methodCallHandler.callMethod(method, new ArrayList<>());
   }
 
   @Then("the requested URL should be {word}")

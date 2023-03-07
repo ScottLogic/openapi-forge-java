@@ -70,8 +70,10 @@ public class SetUpTearDown {
 
   private void getApiClientTypes() {}
 
-  // Although theoretically we could switch @After for @Before here for debugging purposes, it can cause failures.
-  // There seems to be a difference between files on the classpath at compile time and files dynamically added to
+  // Although theoretically we could switch @After for @Before here for debugging purposes, it can
+  // cause failures.
+  // There seems to be a difference between files on the classpath at compile time and files
+  // dynamically added to
   // the classpath. If there are any files in the main package at the test of `mvn test`, these will
   // not be purged fully by this teardown. There may be a fix for this, but it doesn't seem worth it
   // unless further problems show down the line...
