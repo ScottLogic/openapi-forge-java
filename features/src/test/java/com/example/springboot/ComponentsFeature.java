@@ -59,6 +59,11 @@ public class ComponentsFeature {
     assertEquals(expectedUrl, latestResponse.getUrlRequested());
   }
 
+  @Then("the request header should have a cookie property with value {word}")
+  public void the_request_header_should_have_a_cookie_property_with_value(String expectedCookie) {
+    assertEquals(expectedCookie, latestResponse.getCookieHeader());
+  }
+
   @After
   public void after() {
     latestResponse = null;
