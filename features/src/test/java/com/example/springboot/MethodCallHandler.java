@@ -19,9 +19,6 @@ import org.springframework.util.StringUtils;
 
 public class MethodCallHandler {
   private final String packageName = this.getClass().getPackageName();
-  private final String basePath =
-      "https://example.com/"; // TODO should be able to get this from the schema
-  private final String server0 = "api/v3"; // TODO should be able to get this from the schema
   private final TypeConverter typeConverter;
   private ClassLoader classLoader;
 
@@ -71,30 +68,15 @@ public class MethodCallHandler {
 
       // Load and instantiate compiled class.
       File root = new File("src/main/java/");
-      System.err.println(root.getCanonicalPath());
+      //      System.err.println(root.getCanonicalPath());
       URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {root.toURI().toURL()});
       this.classLoader = classLoader;
 
-      Class<?> configurationClass =
-          Class.forName(packageName + ".Configuration", true, classLoader);
       Class<?> apiClientClass = Class.forName(packageName + ".ApiClient", true, classLoader);
-
-      Object configuration = configurationClass.getDeclaredConstructor().newInstance();
-      Method setBasePath = configurationClass.getDeclaredMethod("setBasePath", String.class);
-      setBasePath.invoke(configuration, basePath);
-      Method setSelectedServerIndex =
-          configurationClass.getDeclaredMethod("setSelectedServerIndex", int.class);
-      setSelectedServerIndex.invoke(configuration, 0);
-      Method setServers = configurationClass.getDeclaredMethod("setServers", List.class);
-      setServers.invoke(configuration, List.of(server0));
-
-      Object apiClient =
-          apiClientClass
-              .getDeclaredConstructor(OkHttpClient.class, configurationClass)
-              .newInstance(mockHttp, configuration);
+      Object apiClient = createApiClient(apiClientClass, mockHttp, serverIndex);
 
       Method[] allMethods = apiClientClass.getDeclaredMethods();
-      System.err.println(Arrays.toString(allMethods));
+      //      System.err.println(Arrays.toString(allMethods));
       Method methodWithParameters =
           Arrays.stream(allMethods)
               .filter(m -> m.getName().equals(methodName))
@@ -130,6 +112,42 @@ public class MethodCallHandler {
         | IllegalAccessException
         | InvocationTargetException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private Object createApiClient(Class<?> apiClientClass, OkHttpClient mockHttp, int serverIndex)
+      throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+          IllegalAccessException, ClassNotFoundException {
+    Class<?> configurationClass = Class.forName(packageName + ".Configuration", true, classLoader);
+
+    Object configuration = configurationClass.getDeclaredConstructor().newInstance();
+    setBasePath(configurationClass, configuration);
+
+    Method setSelectedServerIndex =
+        configurationClass.getDeclaredMethod("setSelectedServerIndex", int.class);
+    setSelectedServerIndex.invoke(configuration, serverIndex);
+
+    return apiClientClass
+        .getDeclaredConstructor(OkHttpClient.class, configurationClass)
+        .newInstance(mockHttp, configuration);
+  }
+
+  private void setBasePath(Class<?> configurationClass, Object configuration)
+      throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    Method getServers = configurationClass.getDeclaredMethod("getServers");
+    List<String> servers = (List<String>) getServers.invoke(configuration);
+    Method setBasePath = configurationClass.getDeclaredMethod("setBasePath", String.class);
+    if (servers.size() == 0) {
+      // The default case is where the servers property in the schema is undefined. OpenAPI
+      // allows this if the schema file is hosted on the same server to request from and in the
+      // correct relative location.
+      // https://spec.openapis.org/oas/v3.1.0#fixed-fields
+      // It doesn't matter what the URL is for the purpose of these tests:
+      setBasePath.invoke(configuration, "https://example.com/");
+      Method setServers = configurationClass.getDeclaredMethod("setServers", List.class);
+      setServers.invoke(configuration, List.of("api/v3"));
+    } else {
+      setBasePath.invoke(configuration, "");
     }
   }
 }
