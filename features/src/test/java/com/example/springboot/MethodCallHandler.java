@@ -88,10 +88,7 @@ public class MethodCallHandler {
       Object objectResponse =
           methodWithParameters.invoke(
               apiClient, convertedParameters); // ONLY WORKS WITH BOXED VALUES
-      return new MethodResponse(
-          objectResponse,
-          argumentCaptor.getValue().url().toString(),
-          argumentCaptor.getValue().headers());
+      return new MethodResponse(objectResponse, argumentCaptor.getValue());
     } catch (IOException
         | ClassNotFoundException
         | NoSuchMethodException

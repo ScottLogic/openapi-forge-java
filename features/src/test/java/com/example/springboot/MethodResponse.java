@@ -1,16 +1,15 @@
 package com.example.springboot;
 
 import okhttp3.Headers;
+import okhttp3.Request;
 
 public class MethodResponse {
   private final Object resultOfMethodCall;
-  private final String urlRequested;
-  private final Headers headers;
+  private final Request request;
 
-  MethodResponse(Object resultOfMethodCall, String urlRequested, Headers headers) {
+  MethodResponse(Object resultOfMethodCall, Request request) {
     this.resultOfMethodCall = resultOfMethodCall;
-    this.urlRequested = urlRequested;
-    this.headers = headers;
+    this.request = request;
   }
 
   public Object getResultOfMethodCall() {
@@ -18,10 +17,14 @@ public class MethodResponse {
   }
 
   public String getUrlRequested() {
-    return urlRequested;
+    return request.url().toString();
   }
 
   public Headers getHeaders() {
-    return headers;
+    return request.headers();
+  }
+
+  public String getRequestMethod() {
+    return request.method();
   }
 }

@@ -49,6 +49,12 @@ public class ComponentsFeature {
         methodCallHandler.callMethod(method, new ArrayList<>(), "null", latestServerIndex);
   }
 
+  @When("calling the spied method {word} without params")
+  public void calling_the_spied_method_without(String method) {
+    latestResponse =
+        methodCallHandler.callMethod(method, new ArrayList<>(), "null", latestServerIndex);
+  }
+
   @When("selecting the server at index {int}")
   public void selecting_the_server_at_index(int serverIndex) {
     latestServerIndex = serverIndex;
@@ -57,6 +63,11 @@ public class ComponentsFeature {
   @Then("the requested URL should be {word}")
   public void the_requested_url_should_be(String expectedUrl) {
     assertEquals(expectedUrl, latestResponse.getUrlRequested());
+  }
+
+  @Then("the request method should be of type {word}")
+  public void the_request_method_should_be_of_type(String expectedHttpVerb) {
+    assertEquals(expectedHttpVerb, latestResponse.getRequestMethod().toLowerCase());
   }
 
   @Then("the request header should have a cookie property with value {word}")
