@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -43,34 +44,12 @@ public class MethodCallHandler {
       String methodName, List<String> parameters, String response, int serverIndex)
       throws RuntimeException {
     try {
-      Response mockResponse = mock(Response.class);
-      ResponseBody mockResponseBody = mock(ResponseBody.class);
-      when(mockResponse.body()).thenReturn(mockResponseBody);
-      when(mockResponseBody.string()).thenReturn(response);
-      Call mockCall = mock(Call.class);
       OkHttpClient mockHttp = mock(OkHttpClient.class);
-      ArgumentCaptor<Request> argumentCaptor = ArgumentCaptor.forClass(Request.class);
-      when(mockHttp.newCall(argumentCaptor.capture())).thenReturn(mockCall);
-      when(mockCall.execute()).thenReturn(mockResponse);
+      ArgumentCaptor<Request> requestArgumentCaptor = ArgumentCaptor.forClass(Request.class);
 
-      // Compile source file.
-      JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-      File srcMain = new File("src/main/java/" + packageName.replaceAll("\\.", "/"));
-      File[] filesInSrcMain = srcMain.listFiles();
-      if (filesInSrcMain != null) {
-        String[] filePaths = new String[filesInSrcMain.length];
-        for (int i = 0; i < filesInSrcMain.length; i++) {
-          filePaths[i] = filesInSrcMain[i].getPath();
-          System.err.println("compiling " + filePaths[i]);
-        }
-        compiler.run(null, null, null, filePaths);
-      }
-
-      // Load and instantiate compiled class.
-      File root = new File("src/main/java/");
-      //      System.err.println(root.getCanonicalPath());
-      URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {root.toURI().toURL()});
-      this.classLoader = classLoader;
+      createOkHttpMocks(response, mockHttp, requestArgumentCaptor);
+      compileFilesInPackage();
+      this.classLoader = createClassLoaderForPackage();
 
       Class<?> apiClientClass = Class.forName(packageName + ".ApiClient", true, classLoader);
       Object apiClient = createApiClient(apiClientClass, mockHttp, serverIndex);
@@ -88,7 +67,7 @@ public class MethodCallHandler {
       Object objectResponse =
           methodWithParameters.invoke(
               apiClient, convertedParameters); // ONLY WORKS WITH BOXED VALUES
-      return new MethodResponse(objectResponse, argumentCaptor.getValue());
+      return new MethodResponse(objectResponse, requestArgumentCaptor.getValue());
     } catch (IOException
         | ClassNotFoundException
         | NoSuchMethodException
@@ -97,6 +76,23 @@ public class MethodCallHandler {
         | IllegalAccessException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private ClassLoader createClassLoaderForPackage() throws MalformedURLException {
+    File root = new File("src/main/java/");
+    return URLClassLoader.newInstance(new URL[] {root.toURI().toURL()});
+  }
+
+  private void createOkHttpMocks(
+      String response, OkHttpClient mockHttp, ArgumentCaptor<Request> requestArgumentCaptor)
+      throws IOException {
+    Response mockResponse = mock(Response.class);
+    ResponseBody mockResponseBody = mock(ResponseBody.class);
+    when(mockResponse.body()).thenReturn(mockResponseBody);
+    when(mockResponseBody.string()).thenReturn(response);
+    Call mockCall = mock(Call.class);
+    when(mockHttp.newCall(requestArgumentCaptor.capture())).thenReturn(mockCall);
+    when(mockCall.execute()).thenReturn(mockResponse);
   }
 
   public String getPropertyOnObject(
@@ -111,6 +107,20 @@ public class MethodCallHandler {
         | IllegalAccessException
         | InvocationTargetException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void compileFilesInPackage() {
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    File srcMain = new File("src/main/java/" + packageName.replaceAll("\\.", "/"));
+    File[] filesInSrcMain = srcMain.listFiles();
+    if (filesInSrcMain != null) {
+      String[] filePaths = new String[filesInSrcMain.length];
+      for (int i = 0; i < filesInSrcMain.length; i++) {
+        filePaths[i] = filesInSrcMain[i].getPath();
+        System.err.println("compiling " + filePaths[i]);
+      }
+      compiler.run(null, null, null, filePaths);
     }
   }
 
