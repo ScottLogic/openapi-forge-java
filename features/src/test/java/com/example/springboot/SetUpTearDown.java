@@ -47,21 +47,20 @@ public class SetUpTearDown {
     String[] openApiForgeCommand =
         new String[] {
           npxCommand, // TODO: Add as peer dependency npm?
-          //          "openapi-forge",
-          "node", // Only needed when running openapi-forge from relative path
-          "../../openapi-forge/src/index.js",
+          "openapi-forge",
+          //          "node", // Only needed when running openapi-forge from relative path
+          //          "../../openapi-forge/src/index.js",
           "forge",
           tempSchemaPath,
           "..",
           "--output",
-          "../features", // ".."???
+          ".",
           "--exclude",
           "pom.xml",
-          // In current version of openapi-forge, can only exclude one item
-          //            ".mvn/**",
-          //            ".gitignore",
-          //            "mvnw*",
-          //            "*.md"
+          ".mvn/**",
+          ".gitignore",
+          "mvnw*",
+          "*.md"
         };
     // TODO: Can we get the names of all files generated to be returned with the exit code?
     Process process = runtime.exec(openApiForgeCommand);
