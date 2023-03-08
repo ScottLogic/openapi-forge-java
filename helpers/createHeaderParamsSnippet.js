@@ -13,7 +13,7 @@ const createHeaderParamsSnippet = (sortedParams) => {
     cookieParams = cookieParams.slice(1);
     for (const cookieParam of cookieParams) {
       safeParamName = toParamName(cookieParam.name);
-      headerSnippet += `;${cookieParam.name}=" + ${safeParamName}`;
+      headerSnippet += ` + ";${cookieParam.name}=" + ${safeParamName}`;
     }
     headerSnippet += '")\n';
   }
