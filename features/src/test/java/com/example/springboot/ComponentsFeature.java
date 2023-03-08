@@ -60,8 +60,13 @@ public class ComponentsFeature {
   }
 
   @Then("the request header should have a cookie property with value {word}")
-  public void the_request_header_should_have_a_cookie_property_with_value(String expectedCookie) {
-    assertEquals(expectedCookie, latestResponse.getCookieHeader());
+  public void the_request_header_should_have_a_cookie_property_with_value(String expectedHeader) {
+    assertEquals(expectedHeader, latestResponse.getHeaders().get("cookie"));
+  }
+
+  @Then("the request should have a header property with value {word}")
+  public void the_request_should_have_a_header_property_with_value(String expectedHeader) {
+    assertEquals(expectedHeader, latestResponse.getHeaders().get("test"));
   }
 
   @After

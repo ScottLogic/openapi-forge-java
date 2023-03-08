@@ -9,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.tools.JavaCompiler;
@@ -92,7 +91,7 @@ public class MethodCallHandler {
       return new MethodResponse(
           objectResponse,
           argumentCaptor.getValue().url().toString(),
-          argumentCaptor.getValue().header("cookie"));
+          argumentCaptor.getValue().headers());
     } catch (IOException
         | ClassNotFoundException
         | NoSuchMethodException
