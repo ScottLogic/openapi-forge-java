@@ -68,8 +68,6 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         {{createHeaderParamsSnippet _sortedParameters}}
         Call call = _client.newCall(request);
         Response response = call.execute();
-        int responseStatusCode = response.code();
-        Headers responseHeaders = response.headers();
         {{safeTypeConvert _response.schema}} responseObject;
         {{#if _response.schema}}
         String responseBodyString = response.body().string();
@@ -80,8 +78,8 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         {{/if}}
         return new HttpResponse<{{safeTypeConvert _response.schema}}>(
               responseObject,
-              responseStatusCode,
-              responseHeaders
+              response.code(),
+              response.headers()
         );
     }
     {{else}}
