@@ -9,13 +9,13 @@ const createHeaderParamsSnippet = (sortedParams) => {
   let cookieParams = getParametersByType(sortedParams, "cookie");
   if (cookieParams.length !== 0) {
     let safeParamName = toParamName(cookieParams[0].name);
-    headerSnippet += `request = request.newBuilder().addHeader("cookie", "${cookieParams[0].name}={${safeParamName}}`;
+    headerSnippet += `.addHeader("cookie", "${cookieParams[0].name}={${safeParamName}}`;
     cookieParams = cookieParams.slice(1);
     for (const cookieParam of cookieParams) {
       safeParamName = toParamName(cookieParam.name);
       headerSnippet += `;${cookieParam.name}=" + ${safeParamName}`;
     }
-    headerSnippet += '").build();\n';
+    headerSnippet += '")\n';
   }
 
   const headerParams = getParametersByType(sortedParams, "header");
@@ -32,8 +32,7 @@ const createHeaderParamsSnippet = (sortedParams) => {
     switch (headerParam.schema.type) {
       case "array":
         headerSnippet +=
-          `request = request.newBuilder().addHeader("${headerParam.name}", String.join(",", ${safeParamName}))` +
-          ";\n";
+          `.addHeader("${headerParam.name}", String.join(",", ${safeParamName}))`;
         break;
       case "object": {
         let serialisedObject = "";
@@ -43,14 +42,12 @@ const createHeaderParamsSnippet = (sortedParams) => {
           serialisedObject += `${propName},${safeParamName}.${propName}`;
         }
         headerSnippet +=
-          `request = request.newBuilder().addHeader("${headerParam.name}", ${serialisedObject}).build()` +
-          ";\n";
+          `.addHeader("${headerParam.name}", ${serialisedObject})`;
         break;
       }
       default:
         headerSnippet +=
-          `request = request.newBuilder().addHeader("${headerParam.name}", ${safeParamName}).build()` +
-          ";\n";
+          `.addHeader("${headerParam.name}", ${safeParamName})`;
     }
   }
 
