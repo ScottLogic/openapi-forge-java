@@ -1,6 +1,6 @@
 {
   "package": {
-    "default": "com.example.springboot",
+    "default": "com.openapi.forge",
     "description": "The package for the generated classes."
   }
 }
