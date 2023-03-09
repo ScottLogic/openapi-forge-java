@@ -32,7 +32,7 @@ const createReturnStatement = (responseSchema) => {
       returnStatement = toParamName(responseType);
   }
 
-  return new Handlebars.SafeString(mapperStatements + `return ${returnStatement};`);
+  return new Handlebars.SafeString(mapperStatements + `responseObject = ${returnStatement};`);
 };
 
 module.exports = createReturnStatement;
