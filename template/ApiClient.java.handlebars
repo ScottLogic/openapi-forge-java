@@ -71,7 +71,6 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         {{safeTypeConvert _response.schema}} responseObject;
         {{#if _response.schema}}
         String responseBodyString = response.body().string();
-        {{safeTypeConvert _response.schema}} responseObject;
         {{createReturnStatement _response.schema}}
         {{else}}
         responseObject = null;
