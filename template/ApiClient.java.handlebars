@@ -64,8 +64,8 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
             {{else}}
             {{{queryType @key}}}
             {{/if}}
+            {{createHeaderParamsSnippet _sortedParameters}}
             .build();
-        {{createHeaderParamsSnippet _sortedParameters}}
         Call call = _client.newCall(request);
         Response response = call.execute();
         {{#if _response.schema}}
