@@ -16,6 +16,7 @@ const createHeaderParamsSnippet = (sortedParams) => {
       headerSnippet += ` + ";${cookieParam.name}=" + ${safeParamName}`;
     }
     headerSnippet += '")\n';
+
   }
 
   const headerParams = getParametersByType(sortedParams, "header");
