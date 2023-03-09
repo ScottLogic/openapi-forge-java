@@ -18,7 +18,7 @@ const fromFormat = (propFormat, shouldBox) => {
     case "string":
       return "String";
     default:
-      return "Void";
+      return "void";
   }
 };
 
@@ -42,12 +42,12 @@ const fromType = (propType, additionalProperties, items, shouldBox) => {
         return "Object";
       }
     default:
-      return "Void";
+      return shouldBox ? "Void" : "void";
   }
 };
 
 const typeConvert = (prop, shouldBox = false) => {
-  if (prop === null) return "Void";
+  if (prop === null) return shouldBox ? "Void" : "void";
 
   if (prop === undefined) return "object";
 
