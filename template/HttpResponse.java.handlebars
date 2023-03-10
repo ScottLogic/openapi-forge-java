@@ -2,29 +2,31 @@ package com.example.springboot;
 
 import okhttp3.Headers;
 
-/// <summary>
-/// Represents an HTTP response.
-/// </summary>
+// <summary>
+// Represents an HTTP response.
+// </summary>
 public class HttpResponse<T> {
 
-    public HttpResponse(T givenData, int givenStatusCode, Headers givenHeaders) {
-        data = givenData;
-        statusCode = givenStatusCode;
-        headers = givenHeaders;
-    }
-
-    /// <summary>
-    /// Gets the typed response.
-    /// </summary>
+    // <summary>
+    // Gets the typed response.
+    // </summary>
     public final T data;
 
-    /// <summary>
-    /// Gets the HTTP status code.
-    /// </summary>
+    // <summary>
+    // Gets the HTTP status code.
+    // </summary>
     public final int statusCode;
 
-    /// <summary>
-    /// Gets the returned HTTP headers.
-    /// </summary>
+    // <summary>
+    // Gets the returned HTTP headers.
+    // </summary>
     public final Headers headers;
+
+    public HttpResponse(T data, int statusCode, Headers headers) {
+        this.data = data;
+        this.statusCode = statusCode;
+        this.headers = headers;
+    }
+
+
 }
