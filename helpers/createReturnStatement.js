@@ -24,7 +24,7 @@ const createReturnStatement = (responseSchema) => {
       returnStatement = `${responseType}.Parse(responseBody)`;
       break;
     case "String":
-      returnStatement = "responseBody";
+      returnStatement = "responseBodyString";
       break;
     default:
       mapperStatements = `ObjectMapper deserMapper = new ObjectMapper();\n`;
@@ -32,7 +32,7 @@ const createReturnStatement = (responseSchema) => {
       returnStatement = toParamName(responseType);
   }
 
-  return new Handlebars.SafeString(mapperStatements + `return ${returnStatement};`);
+  return new Handlebars.SafeString(mapperStatements + `responseObject = ${returnStatement};`);
 };
 
 module.exports = createReturnStatement;
