@@ -2,6 +2,7 @@ package com.example.springboot;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +22,12 @@ public class SetUpTearDown {
 
   @Given("an API with the following specification")
   public void an_api_with_spec(String spec) throws IOException, InterruptedException {
+    generateApi(spec);
+  }
+
+  @When("generating an API from the following specification")
+  public void generating_an_api_from_the_following_specification(String spec)
+      throws IOException, InterruptedException {
     generateApi(spec);
   }
 

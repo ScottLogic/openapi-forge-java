@@ -21,7 +21,6 @@ import org.springframework.util.StringUtils;
 public class MethodCallHandler {
   private final String packageName = this.getClass().getPackageName();
   private final TypeConverter typeConverter;
-  private ClassLoader classLoader;
 
   MethodCallHandler(TypeConverter typeConverter) {
     this.typeConverter = typeConverter;
@@ -49,7 +48,7 @@ public class MethodCallHandler {
 
       createOkHttpMocks(response, mockHttp, requestArgumentCaptor);
       compileFilesInPackage();
-      this.classLoader = createClassLoaderForPackage();
+      ClassLoader classLoader = createClassLoaderForPackage();
 
       Class<?> apiClientClass = Class.forName(packageName + ".ApiClient", true, classLoader);
       Object apiClient = createApiClient(apiClientClass, mockHttp, serverIndex);
@@ -78,6 +77,59 @@ public class MethodCallHandler {
     }
   }
 
+  public String getPropertyOnObject(
+      String propName, Object latestResponse, String latestResponseType)
+      throws MalformedURLException, ClassNotFoundException, NoSuchMethodException,
+          InvocationTargetException, IllegalAccessException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> propClass = Class.forName(packageName + "." + latestResponseType, true, classLoader);
+    Method getProp = propClass.getDeclaredMethod("get" + StringUtils.capitalize(propName));
+    getProp.setAccessible(true); // Otherwise causes IllegalAccessException.
+    return getProp.invoke(latestResponse).toString();
+  }
+
+  public boolean doesClassExist(String className)
+      throws ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    Class.forName(packageName + "." + className, false, createClassLoaderForPackage());
+    return true;
+  }
+
+  public boolean classHasProperty(String className, String propertyName)
+      throws NoSuchFieldException, ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+    return clazz.getField(propertyName).getName().equals(propertyName);
+  }
+
+  public String getTypeOfClassProperty(String className, String propertyName)
+      throws NoSuchFieldException, ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+    return clazz.getField(propertyName).getGenericType().getTypeName();
+  }
+
+  public boolean classHasDefaultConstructor(String className)
+      throws ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+
+    try {
+      clazz.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException
+        | IllegalAccessException
+        | InvocationTargetException
+        | NoSuchMethodException e) {
+      // case 2
+      return false;
+    }
+    return true;
+  }
+
   private ClassLoader createClassLoaderForPackage() throws MalformedURLException {
     File root = new File("src/main/java/");
     return URLClassLoader.newInstance(new URL[] {root.toURI().toURL()});
@@ -95,25 +147,17 @@ public class MethodCallHandler {
     when(mockCall.execute()).thenReturn(mockResponse);
   }
 
-  public String getPropertyOnObject(
-      String propName, Object latestResponse, String latestResponseType) {
-    try {
-      Class<?> propClass = Class.forName(packageName + "." + latestResponseType, true, classLoader);
-      Method getProp = propClass.getDeclaredMethod("get" + StringUtils.capitalize(propName));
-      getProp.setAccessible(true); // Otherwise causes IllegalAccessException.
-      return getProp.invoke(latestResponse).toString();
-    } catch (ClassNotFoundException
-        | NoSuchMethodException
-        | IllegalAccessException
-        | InvocationTargetException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private void compileFilesInPackage() {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     File srcMain = new File("src/main/java/" + packageName.replaceAll("\\.", "/"));
     File[] filesInSrcMain = srcMain.listFiles();
+    //    File[] filesInSrcMain =
+    System.err.println(
+        Arrays.toString(
+            Arrays.stream(srcMain.listFiles())
+                .filter(
+                    file -> file.getPath().endsWith(".java")) // To avoid re-compiling .class files.
+                .toArray(File[]::new)));
     if (filesInSrcMain != null) {
       String[] filePaths = new String[filesInSrcMain.length];
       for (int i = 0; i < filesInSrcMain.length; i++) {
@@ -126,7 +170,9 @@ public class MethodCallHandler {
 
   private Object createApiClient(Class<?> apiClientClass, OkHttpClient mockHttp, int serverIndex)
       throws NoSuchMethodException, InvocationTargetException, InstantiationException,
-          IllegalAccessException, ClassNotFoundException {
+          IllegalAccessException, ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
     Class<?> configurationClass = Class.forName(packageName + ".Configuration", true, classLoader);
 
     Object configuration = configurationClass.getDeclaredConstructor().newInstance();
@@ -152,9 +198,11 @@ public class MethodCallHandler {
       // correct relative location.
       // https://spec.openapis.org/oas/v3.1.0#fixed-fields
       // It doesn't matter what the URL is for the purpose of these tests:
-      setBasePath.invoke(configuration, "https://example.com/");
+      //      setBasePath.invoke(configuration, "https://example.com/");
+      setBasePath.invoke(configuration, "https://doesnotmatter.com/");
       Method setServers = configurationClass.getDeclaredMethod("setServers", List.class);
-      setServers.invoke(configuration, List.of("api/v3"));
+      //      setServers.invoke(configuration, List.of("api/v3"));
+      setServers.invoke(configuration, List.of("somewhere/around"));
     } else {
       setBasePath.invoke(configuration, "");
     }
