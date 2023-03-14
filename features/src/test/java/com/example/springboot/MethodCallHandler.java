@@ -159,10 +159,9 @@ public class MethodCallHandler {
       // allows this if the schema file is hosted on the same server to request from and in the
       // correct relative location.
       // https://spec.openapis.org/oas/v3.1.0#fixed-fields
-      // It doesn't matter what the URL is for the purpose of these tests:
-      setBasePath.invoke(configuration, "https://example.com/");
+      setBasePath.invoke(configuration, "https://doesnotmatter.com/");
       Method setServers = configurationClass.getDeclaredMethod("setServers", List.class);
-      setServers.invoke(configuration, List.of("api/v3"));
+      setServers.invoke(configuration, List.of("somewhere/around"));
     } else {
       setBasePath.invoke(configuration, "");
     }
