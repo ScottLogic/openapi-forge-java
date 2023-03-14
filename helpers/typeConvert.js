@@ -42,12 +42,12 @@ const fromType = (propType, additionalProperties, items, shouldBox) => {
         return "Object";
       }
     default:
-      return "void";
+      return shouldBox ? "Void" : "void";
   }
 };
 
 const typeConvert = (prop, shouldBox = false) => {
-  if (prop === null) return "void";
+  if (prop === null) return shouldBox ? "Void" : "void";
 
   if (prop === undefined) return "object";
 
