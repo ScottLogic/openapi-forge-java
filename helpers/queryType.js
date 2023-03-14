@@ -1,13 +1,4 @@
-const queryType = (key) => {
-    if (key == 'delete') {
-        return '.delete()';
-    } else if (key == "put") {
-        return '.put(RequestBody.create("", null))'
-    } else if (key == "post") {
-        return '.post(RequestBody.create("", null))'
-    } else {
-        return '';
-    }
-};
+const queryType = (httpVerb) =>
+  `.method("${httpVerb}", RequestBody.create("", null))`;
 
 module.exports = queryType;
