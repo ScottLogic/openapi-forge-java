@@ -21,7 +21,6 @@ import org.springframework.util.StringUtils;
 public class MethodCallHandler {
   private final String packageName = this.getClass().getPackageName();
   private final TypeConverter typeConverter;
-  private ClassLoader classLoader;
 
   MethodCallHandler(TypeConverter typeConverter) {
     this.typeConverter = typeConverter;
@@ -49,10 +48,10 @@ public class MethodCallHandler {
 
       createOkHttpMocks(response, mockHttp, requestArgumentCaptor);
       compileFilesInPackage();
-      this.classLoader = createClassLoaderForPackage();
+      ClassLoader classLoader = createClassLoaderForPackage();
 
       Class<?> apiClientClass = Class.forName(packageName + ".ApiClient", true, classLoader);
-      Object apiClient = createApiClient(apiClientClass, mockHttp, serverIndex);
+      Object apiClient = createApiClient(apiClientClass, mockHttp, serverIndex, classLoader);
 
       Method[] allMethods = apiClientClass.getDeclaredMethods();
       Method methodWithParameters =
@@ -67,7 +66,7 @@ public class MethodCallHandler {
       Object objectResponse =
           methodWithParameters.invoke(
               apiClient, convertedParameters); // ONLY WORKS WITH BOXED VALUES
-      return new MethodResponse(objectResponse, requestArgumentCaptor.getValue());
+      return new MethodResponse(objectResponse, requestArgumentCaptor.getValue(), classLoader);
     } catch (IOException
         | ClassNotFoundException
         | NoSuchMethodException
@@ -96,12 +95,14 @@ public class MethodCallHandler {
   }
 
   public String getPropertyOnObject(
-      String propName, Object latestResponse, String latestResponseType) {
+      String propName, MethodResponse latestResponse, String latestResponseType) {
     try {
-      Class<?> propClass = Class.forName(packageName + "." + latestResponseType, true, classLoader);
+      Class<?> propClass =
+          Class.forName(
+              packageName + "." + latestResponseType, true, latestResponse.getClassLoader());
       Method getProp = propClass.getDeclaredMethod("get" + StringUtils.capitalize(propName));
       getProp.setAccessible(true); // Otherwise causes IllegalAccessException.
-      return getProp.invoke(latestResponse).toString();
+      return getProp.invoke(latestResponse.getResultOfMethodCall()).toString();
     } catch (ClassNotFoundException
         | NoSuchMethodException
         | IllegalAccessException
@@ -124,9 +125,10 @@ public class MethodCallHandler {
     }
   }
 
-  private Object createApiClient(Class<?> apiClientClass, OkHttpClient mockHttp, int serverIndex)
+  private Object createApiClient(
+      Class<?> apiClientClass, OkHttpClient mockHttp, int serverIndex, ClassLoader classLoader)
       throws NoSuchMethodException, InvocationTargetException, InstantiationException,
-          IllegalAccessException, ClassNotFoundException {
+          IllegalAccessException, ClassNotFoundException, MalformedURLException {
     Class<?> configurationClass = Class.forName(packageName + ".Configuration", true, classLoader);
 
     Object configuration = configurationClass.getDeclaredConstructor().newInstance();

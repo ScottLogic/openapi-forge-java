@@ -32,8 +32,7 @@ public class ComponentsFeature {
   @And("the response should have a property {word} with value {word}")
   public void response_should_have_property(String propName, String propValue) {
     String actualProp =
-        methodCallHandler.getPropertyOnObject(
-            propName, latestResponse.getResultOfMethodCall(), latestResponseType);
+        methodCallHandler.getPropertyOnObject(propName, latestResponse, latestResponseType);
     assertEquals(propValue, actualProp);
   }
 

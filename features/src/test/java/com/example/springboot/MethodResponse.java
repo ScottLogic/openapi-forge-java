@@ -6,10 +6,12 @@ import okhttp3.Request;
 public class MethodResponse {
   private final Object resultOfMethodCall;
   private final Request request;
+  private final ClassLoader classLoader;
 
-  MethodResponse(Object resultOfMethodCall, Request request) {
+  MethodResponse(Object resultOfMethodCall, Request request, ClassLoader classLoader) {
     this.resultOfMethodCall = resultOfMethodCall;
     this.request = request;
+    this.classLoader = classLoader;
   }
 
   public Object getResultOfMethodCall() {
@@ -26,5 +28,9 @@ public class MethodResponse {
 
   public String getRequestMethod() {
     return request.method();
+  }
+
+  public ClassLoader getClassLoader() {
+    return classLoader;
   }
 }
