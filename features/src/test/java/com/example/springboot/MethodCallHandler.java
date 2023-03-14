@@ -114,15 +114,21 @@ public class MethodCallHandler {
   private void compileFilesInPackage() {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     File srcMain = new File("src/main/java/" + packageName.replaceAll("\\.", "/"));
-    File[] filesInSrcMain = srcMain.listFiles();
-    if (filesInSrcMain != null) {
-      String[] filePaths = new String[filesInSrcMain.length];
-      for (int i = 0; i < filesInSrcMain.length; i++) {
-        filePaths[i] = filesInSrcMain[i].getPath();
-        System.err.println("compiling " + filePaths[i]);
-      }
-      compiler.run(null, null, null, filePaths);
+    File[] files = srcMain.listFiles();
+    if (files == null) {
+      System.err.println("Failed to read files in src/main/java/");
+      return;
     }
+    File[] filesInSrcMain =
+        Arrays.stream(files)
+            .filter(file -> file.getPath().endsWith(".java")) // To avoid re-compiling .class files.
+            .toArray(File[]::new);
+    String[] filePaths = new String[filesInSrcMain.length];
+    for (int i = 0; i < filesInSrcMain.length; i++) {
+      filePaths[i] = filesInSrcMain[i].getPath();
+      System.out.println("compiling " + filePaths[i]);
+    }
+    compiler.run(null, null, null, filePaths);
   }
 
   private Object createApiClient(
