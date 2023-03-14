@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -109,6 +110,51 @@ public class MethodCallHandler {
         | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public boolean doesClassExist(String className)
+      throws ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    Class.forName(packageName + "." + className, false, createClassLoaderForPackage());
+    return true;
+  }
+
+  public boolean classHasProperty(String className, String propertyName)
+      throws NoSuchFieldException, ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+    return clazz.getField(propertyName).getName().equals(propertyName);
+  }
+
+  public String getTypeOfClassProperty(String className, String propertyName)
+      throws NoSuchFieldException, ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+    return clazz.getField(propertyName).getGenericType().getTypeName();
+  }
+
+  public boolean classHasDefaultConstructor(String className)
+      throws ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+
+    try {
+      Constructor<?> constructor = clazz.getDeclaredConstructor();
+      constructor.setAccessible(true); // Otherwise causes IllegalAccessException.
+      constructor
+          .newInstance(); // Test whether the default constructor exists by trying to create an
+      // instance with it.
+    } catch (InstantiationException
+        | IllegalAccessException
+        | InvocationTargetException
+        | NoSuchMethodException e) {
+      e.printStackTrace();
+      return false;
+    }
+    return true;
   }
 
   private void compileFilesInPackage() {

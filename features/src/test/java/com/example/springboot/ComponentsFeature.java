@@ -1,11 +1,13 @@
 package com.example.springboot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,7 @@ public class ComponentsFeature {
   private String latestResponseType;
   private int latestServerIndex = 0;
   private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
+  private JavaTypeToGenericType javaTypeToGenericType = new JavaTypeToGenericType();
 
   @When("calling the method {word} and the server responds with")
   public void calling_method_server_responds(String method, String response) {
@@ -29,11 +32,33 @@ public class ComponentsFeature {
     assertEquals(type, latestResponse.getResultOfMethodCall().getClass().getSimpleName());
   }
 
+  @Then("it should generate a model object named {word}")
+  public void it_should_generate_a_model_object_named(String modelObjectName)
+      throws ClassNotFoundException, MalformedURLException {
+    assertTrue(methodCallHandler.doesClassExist(modelObjectName));
+  }
+
   @And("the response should have a property {word} with value {word}")
   public void response_should_have_property(String propName, String propValue) {
     String actualProp =
         methodCallHandler.getPropertyOnObject(propName, latestResponse, latestResponseType);
     assertEquals(propValue, actualProp);
+  }
+
+  @And("{word} should have an optional property named {word} of type {word}")
+  public void should_have_an_optional_property_named(
+      String modelObjectName, String property, String expectedType)
+      throws MalformedURLException, NoSuchFieldException, ClassNotFoundException {
+    // This is an approximation that assumes that if
+    // 1) a field exists on the object and
+    // 2) the default constructor is available (we can instantiate the class without assigning any
+    // properties)
+    // then the property is optional.
+    assertTrue(methodCallHandler.doesClassExist(modelObjectName));
+    assertTrue(methodCallHandler.classHasProperty(modelObjectName, property));
+    String actualType = methodCallHandler.getTypeOfClassProperty(modelObjectName, property);
+    assertEquals(expectedType, javaTypeToGenericType.convert(actualType));
+    assertTrue(methodCallHandler.classHasDefaultConstructor(modelObjectName));
   }
 
   @When("calling the method {word} with parameters {string}")
@@ -84,5 +109,6 @@ public class ComponentsFeature {
     latestResponse = null;
     latestResponseType = null;
     latestServerIndex = 0;
+    methodCallHandler = new MethodCallHandler(new TypeConverter());
   }
 }
