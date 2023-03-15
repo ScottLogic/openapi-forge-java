@@ -9,6 +9,7 @@ import io.cucumber.java.en.When;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ComponentsFeature {
@@ -85,6 +86,12 @@ public class ComponentsFeature {
   public void calling_the_spied_method_without(String method) {
     latestResponse =
         methodCallHandler.callMethod(method, new ArrayList<>(), "null", latestServerIndex);
+  }
+
+  @When("calling the method {word} with object {}")
+  public void calling_the_method_with_object(String method, String objectAsString) {
+    List<String> parameters = Collections.singletonList(objectAsString);
+    latestResponse = methodCallHandler.callMethod(method, parameters, "null", latestServerIndex);
   }
 
   @When("selecting the server at index {int}")
