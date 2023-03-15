@@ -94,6 +94,12 @@ public class ComponentsFeature {
     latestResponse = methodCallHandler.callMethod(method, parameters, "null", latestServerIndex);
   }
 
+  @When("calling the method {word} with array {string}")
+  public void calling_the_method_with_array(String method, String arrayAsString) {
+    List<String> parameters = Collections.singletonList(arrayAsString);
+    latestResponse = methodCallHandler.callMethod(method, parameters, "null", latestServerIndex);
+  }
+
   @When("selecting the server at index {int}")
   public void selecting_the_server_at_index(int serverIndex) {
     latestServerIndex = serverIndex;
