@@ -5,6 +5,7 @@
     {{/if}}
     class {{toClassName @key}} 
     {
+      {{setVar "requiredProperties" required}}
       {{#each properties}}
 
         {{#if description}}
@@ -16,6 +17,9 @@
         // <example>
         // {{example}}
         // <example>
+        {{/if}}
+        {{#if (isPropertyRequired @key @root.requiredProperties) }}
+        @NotNull
         {{/if}}
         public {{{safeTypeConvert this}}} {{@key}};
         
