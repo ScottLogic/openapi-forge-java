@@ -68,12 +68,16 @@ public class MethodCallHandler {
               apiClient, convertedParameters); // ONLY WORKS WITH BOXED VALUES
       return new MethodResponse(objectResponse, requestArgumentCaptor.getValue(), classLoader);
     } catch (IOException
-        | ClassNotFoundException
         | NoSuchMethodException
         | InvocationTargetException
         | InstantiationException
         | IllegalAccessException e) {
       throw new RuntimeException(e);
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(
+          "There may be a compile error in the generated code."
+              + " Try generating using the JSON schema from the test. "
+              + e);
     }
   }
 
