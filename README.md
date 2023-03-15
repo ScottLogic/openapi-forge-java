@@ -1,8 +1,20 @@
-## OpenAPI Forge - C#
+## OpenAPI Forge - Java
 
 This repository is the C# generator for the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge), see that repository for usage instructions:
 
 https://github.com/ScottLogic/openapi-forge
+
+## Configuration
+
+OpenAPI Forge is opinionated in its approach, we don't provide a vast range of configuration options, just the essentials! You can list the generator-specific configuration options by running the `generate-options` command as follows:
+
+```
+% openapi-forge generator-options openapi-forge-java
+This generator has a number of additional options which can be supplied when executing the 'forge' command.
+
+Options:
+  --generator.package <value>  The package for the generated classes.
+```
 
 ## Development
 
