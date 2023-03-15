@@ -1,0 +1,6 @@
+{
+  "package": {
+    "default": "com.openapi.forge",
+    "description": "The package for the generated classes."
+  }
+}
