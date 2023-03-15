@@ -5,8 +5,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -134,41 +132,6 @@ public class MethodCallHandler {
     ClassLoader classLoader = createClassLoaderForPackage();
     Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
     return clazz.getField(propertyName).getGenericType().getTypeName();
-  }
-
-  public boolean propertyHasNotNullAnnotation(String className, String propertyName)
-      throws MalformedURLException, ClassNotFoundException, NoSuchFieldException {
-    System.err.println(className);
-    System.err.println(propertyName);
-    compileFilesInPackage();
-    ClassLoader classLoader = createClassLoaderForPackage();
-    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
-    System.err.println(Arrays.toString(clazz.getAnnotations())); // declaration annotations TODO: what mean?
-    Annotation[] annotations = clazz.getDeclaredField(propertyName).getAnnotations();
-    System.err.println(Arrays.toString(annotations));
-    return false;
-  }
-
-  public boolean classHasDefaultConstructor(String className)
-      throws ClassNotFoundException, MalformedURLException {
-    compileFilesInPackage();
-    ClassLoader classLoader = createClassLoaderForPackage();
-    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
-
-    try {
-      Constructor<?> constructor = clazz.getDeclaredConstructor();
-      constructor.setAccessible(true); // Otherwise causes IllegalAccessException.
-      constructor
-          .newInstance(); // Test whether the default constructor exists by trying to create an
-      // instance with it.
-    } catch (InstantiationException
-        | IllegalAccessException
-        | InvocationTargetException
-        | NoSuchMethodException e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
   }
 
   private void compileFilesInPackage() {

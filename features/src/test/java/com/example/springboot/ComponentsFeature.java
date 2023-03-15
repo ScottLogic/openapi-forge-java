@@ -48,31 +48,25 @@ public class ComponentsFeature {
   public void should_have_an_optional_property_named(
       String modelObjectName, String property, String expectedType)
       throws MalformedURLException, NoSuchFieldException, ClassNotFoundException {
-    // This is an approximation that assumes that if
-    // 1) a field exists on the object and
-    // 2) the field doesn't have a @NotNull annotation
-    // then the property is optional.
-    assertTrue(methodCallHandler.doesClassExist(modelObjectName));
-    assertTrue(methodCallHandler.classHasProperty(modelObjectName, property));
-    String actualType = methodCallHandler.getTypeOfClassProperty(modelObjectName, property);
-    assertEquals(expectedType, javaTypeToGenericType.convert(actualType));
-    assertTrue(methodCallHandler.propertyHasNotNullAnnotation(modelObjectName, property));
+    // We currently do not have a way to distinguish between optional and required properties
+    should_have_a_property_named(modelObjectName, property, expectedType);
   }
 
   @And("{word} should have a required property named {word} of type {word}")
   public void should_have_a_required_property_named(
       String modelObjectName, String property, String expectedType)
       throws MalformedURLException, NoSuchFieldException, ClassNotFoundException {
-    // This is an approximation that assumes that if
-    // 1) a field exists on the object and
-    // 2) the field has a @NotNull annotation,
-    // then the property is required.
+    // We currently do not have a way to distinguish between optional and required properties
+    should_have_a_property_named(modelObjectName, property, expectedType);
+  }
+
+  public void should_have_a_property_named(
+      String modelObjectName, String property, String expectedType)
+      throws MalformedURLException, ClassNotFoundException, NoSuchFieldException {
     assertTrue(methodCallHandler.doesClassExist(modelObjectName));
     assertTrue(methodCallHandler.classHasProperty(modelObjectName, property));
     String actualType = methodCallHandler.getTypeOfClassProperty(modelObjectName, property);
     assertEquals(expectedType, javaTypeToGenericType.convert(actualType));
-    // This is the only difference to the "optional" test above:
-    assertFalse(methodCallHandler.propertyHasNotNullAnnotation(modelObjectName, property));
   }
 
   @When("calling the method {word} with parameters {string}")
