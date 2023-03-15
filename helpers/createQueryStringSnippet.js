@@ -35,7 +35,7 @@ const serialiseObjectParam = (param) => {
   let serialisedObject = "";
   for (const [propName, objProp] of Object.entries(param.schema.properties)) {
     let serialisedParam = isStringType(objProp)
-      ? `{(${safeParamName}.${propName} == null ? string.Empty : "${propName}=" + java.net.URLEncoder.encode(${safeParamName}.${propName}, StandardCharsets.UTF_8))}`
+      ? `${safeParamName}.${propName} == null ? "" : "${propName}=" + java.net.URLEncoder.encode(${safeParamName}.${propName}, StandardCharsets.UTF_8)`
       : `${propName}={${safeParamName}.${propName}}`;
 
     serialisedObject += serialisedParam + "&";
