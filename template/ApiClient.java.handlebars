@@ -60,7 +60,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         Request request = new Request.Builder()
             .url(requestUri)
             {{#if (bodyParameterExists _sortedParameters)}}
-            {{queryTypeWithBody @key}}
+            {{{queryTypeWithBody @key}}}
             {{else}}
             {{{queryType @key}}}
             {{/if}}
