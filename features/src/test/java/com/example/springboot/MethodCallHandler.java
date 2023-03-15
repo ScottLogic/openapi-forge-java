@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -133,6 +134,19 @@ public class MethodCallHandler {
     ClassLoader classLoader = createClassLoaderForPackage();
     Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
     return clazz.getField(propertyName).getGenericType().getTypeName();
+  }
+
+  public boolean propertyHasNotNullAnnotation(String className, String propertyName)
+      throws MalformedURLException, ClassNotFoundException, NoSuchFieldException {
+    System.err.println(className);
+    System.err.println(propertyName);
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+    System.err.println(Arrays.toString(clazz.getAnnotations())); // declaration annotations TODO: what mean?
+    Annotation[] annotations = clazz.getDeclaredField(propertyName).getAnnotations();
+    System.err.println(Arrays.toString(annotations));
+    return false;
   }
 
   public boolean classHasDefaultConstructor(String className)

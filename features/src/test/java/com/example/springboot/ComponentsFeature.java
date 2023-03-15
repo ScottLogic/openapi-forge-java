@@ -1,7 +1,6 @@
 package com.example.springboot;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -51,14 +50,29 @@ public class ComponentsFeature {
       throws MalformedURLException, NoSuchFieldException, ClassNotFoundException {
     // This is an approximation that assumes that if
     // 1) a field exists on the object and
-    // 2) the default constructor is available (we can instantiate the class without assigning any
-    // properties)
+    // 2) the field doesn't have a @NotNull annotation
     // then the property is optional.
     assertTrue(methodCallHandler.doesClassExist(modelObjectName));
     assertTrue(methodCallHandler.classHasProperty(modelObjectName, property));
     String actualType = methodCallHandler.getTypeOfClassProperty(modelObjectName, property);
     assertEquals(expectedType, javaTypeToGenericType.convert(actualType));
-    assertTrue(methodCallHandler.classHasDefaultConstructor(modelObjectName));
+    assertTrue(methodCallHandler.propertyHasNotNullAnnotation(modelObjectName, property));
+  }
+
+  @And("{word} should have a required property named {word} of type {word}")
+  public void should_have_a_required_property_named(
+      String modelObjectName, String property, String expectedType)
+      throws MalformedURLException, NoSuchFieldException, ClassNotFoundException {
+    // This is an approximation that assumes that if
+    // 1) a field exists on the object and
+    // 2) the field has a @NotNull annotation,
+    // then the property is required.
+    assertTrue(methodCallHandler.doesClassExist(modelObjectName));
+    assertTrue(methodCallHandler.classHasProperty(modelObjectName, property));
+    String actualType = methodCallHandler.getTypeOfClassProperty(modelObjectName, property);
+    assertEquals(expectedType, javaTypeToGenericType.convert(actualType));
+    // This is the only difference to the "optional" test above:
+    assertFalse(methodCallHandler.propertyHasNotNullAnnotation(modelObjectName, property));
   }
 
   @When("calling the method {word} with parameters {string}")
