@@ -12,6 +12,12 @@ public class JavaTypeToGenericType {
     if (javaType.contains("String")) {
       return "string";
     }
+    String packageName = this.getClass().getPackageName();
+    if (javaType.contains(packageName)) {
+      // If we are using a custom type, strip out the package name
+      String[] parts = javaType.split("\\.");
+      return parts[parts.length - 1];
+    }
     throw new UnsupportedOperationException("Converting " + javaType);
   }
 }
