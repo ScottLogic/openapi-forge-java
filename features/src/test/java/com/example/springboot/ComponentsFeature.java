@@ -119,6 +119,11 @@ public class ComponentsFeature {
     assertEquals(expectedHeader, latestResponse.getHeaders().get("test"));
   }
 
+  @Then("the request should have a body with value {}")
+  public void the_request_should_have_a_body_with_value(String expectedBodyAsString) {
+    assertEquals(expectedBodyAsString, latestResponse.getRequestBodyAsString());
+  }
+
   @After
   public void after() {
     latestResponse = null;
