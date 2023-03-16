@@ -1,11 +1,14 @@
 package com.example.springboot;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.hamcrest.CoreMatchers;
+
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +21,7 @@ public class ComponentsFeature {
   private int latestServerIndex = 0;
   private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
   private JavaTypeToGenericType javaTypeToGenericType = new JavaTypeToGenericType();
+  private Object latestExtractedIndex;
 
   @When("calling the method {word} and the server responds with")
   public void calling_method_server_responds(String method, String response) {
@@ -36,6 +40,31 @@ public class ComponentsFeature {
   public void it_should_generate_a_model_object_named(String modelObjectName)
       throws ClassNotFoundException, MalformedURLException {
     assertTrue(methodCallHandler.doesClassExist(modelObjectName));
+  }
+
+  @Then("the response should be equal to {string}")
+  public void response_should_be_equal_to(String expectedResponse) {
+    assertEquals(expectedResponse, latestResponse.getResultOfMethodCall());
+  }
+
+  @Then("the response should be an array")
+  public void theResponseShouldBeAnArray() {
+    String reason =
+        latestResponse.getResultOfMethodCall().getClass().getSimpleName() + " is not an array type";
+    assertThat(
+        reason,
+        isListType(latestResponse.getResultOfMethodCall().getClass()));
+  }
+
+  @When("extracting the object at index {int}")
+  public void extractingTheObjectAtIndex(int index) {
+    Object list = latestResponse.getResultOfMethodCall();
+    if (isListType(list.getClass())) {
+      // TODO: Use this, or change this method to set the latestResponse.
+      latestExtractedIndex = ((List<?>)list).get(index);
+    } else {
+      throw new UnsupportedOperationException("Only List types are supported in this step, not strict array types");
+    }
   }
 
   @And("the response should have a property {word} with value {word}")
@@ -130,11 +159,16 @@ public class ComponentsFeature {
     assertEquals(expectedBodyAsString, latestResponse.getRequestBodyAsString());
   }
 
+  private boolean isListType(Class<?> type) {
+    return type.getSimpleName().contains("List");
+  }
+
   @After
   public void after() {
     latestResponse = null;
     latestResponseType = null;
     latestServerIndex = 0;
+    latestExtractedIndex = null;
     methodCallHandler = new MethodCallHandler(new TypeConverter());
   }
 }
