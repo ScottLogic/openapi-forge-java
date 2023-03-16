@@ -2,21 +2,19 @@ package com.example.springboot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
 
 public class TypeConverter {
   // Cannot store primitives in an array of Objects. This requires generated code to only use boxed
   // values.
-  Object[] convertBoxedTypes(String[] values, Class<?>[] targetTypes) {
-    System.err.println(Arrays.toString(values));
-    System.err.println(Arrays.toString(targetTypes));
-
-    assert values.length == targetTypes.length;
+  Object[] convertBoxedTypes(String[] valuesWithoutOptionalParameters, Class<?>[] targetTypes) {
+    String[] values = fillOutWithNull(valuesWithoutOptionalParameters, targetTypes.length);
     Object[] convertedValues = new Object[values.length];
     for (int i = 0; i < values.length; i++) {
       Class<?> type = targetTypes[i];
       // Please change this if you think of a better way!
-      if (type == Integer.class) {
+      if (values[i] == null) {
+        convertedValues[i] = null;
+      } else if (type == Integer.class) {
         convertedValues[i] = Integer.valueOf(values[i]);
       } else if (type == Long.class) {
         convertedValues[i] = Long.valueOf(values[i]);
@@ -40,7 +38,21 @@ public class TypeConverter {
             "Trying to convert value " + values[i] + " from String to " + type);
       }
     }
-    System.err.println(Arrays.toString(convertedValues));
     return convertedValues;
+  }
+
+  private String[] fillOutWithNull(String[] valuesWithoutOptionalParameters, int length) {
+    // By default, parameters are optional. We can fill out the parameters with null to support
+    // that.
+    // https://swagger.io/specification/#parameter-object
+    String[] values = new String[length];
+    for (int i = 0; i < length; i++) {
+      if (i < valuesWithoutOptionalParameters.length) {
+        values[i] = valuesWithoutOptionalParameters[i];
+      } else {
+        values[i] = null;
+      }
+    }
+    return values;
   }
 }
