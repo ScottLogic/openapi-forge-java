@@ -2,6 +2,7 @@ package com.example.springboot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 
 public class TypeConverter {
   // Cannot store primitives in an array of Objects. This requires generated code to only use boxed
@@ -11,7 +12,6 @@ public class TypeConverter {
     Object[] convertedValues = new Object[values.length];
     for (int i = 0; i < values.length; i++) {
       Class<?> type = targetTypes[i];
-      // Please change this if you think of a better way!
       if (values[i] == null) {
         convertedValues[i] = null;
       } else if (type == Integer.class) {
@@ -33,6 +33,10 @@ public class TypeConverter {
         } catch (JsonProcessingException e) {
           throw new RuntimeException(e);
         }
+      } else if (type.toString().contains("java.util.List")) {
+        // Assuming a list of strings.
+        String[] strings = values[i].split(",");
+        convertedValues[i] = Arrays.asList(strings);
       } else {
         throw new UnsupportedOperationException(
             "Trying to convert value " + values[i] + " from String to " + type);
