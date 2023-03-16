@@ -21,18 +21,18 @@ const setPathParameters = (path, sortedParams) => {
       const safeParamName = toParamName(captureGroup);
       switch (pathParam.schema.type) {
         case "array":
-          return `{string.Join("%2C", ${safeParamName})}`;
+          return `" + String.join("%2C", ${safeParamName}) + "`;
         case "object": {
           let serialisedObject = "";
           for (const [propName] of Object.entries(
             pathParam.schema.properties
           )) {
-            serialisedObject += `${propName}%2C{${safeParamName}.${propName}}%2C`;
+            serialisedObject += `${propName}%2C" + ${safeParamName}.${propName} + "%2C`;
           }
           return serialisedObject.slice(0, -3);
         }
         default:
-          return `{${safeParamName}}`;
+          return `" + ${safeParamName} + "`;
       }
     })
   );
