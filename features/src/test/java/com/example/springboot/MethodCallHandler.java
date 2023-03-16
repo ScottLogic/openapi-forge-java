@@ -69,7 +69,6 @@ public class MethodCallHandler {
       return new MethodResponse(objectResponse, requestArgumentCaptor.getValue(), classLoader);
     } catch (IOException
         | NoSuchMethodException
-        | InvocationTargetException
         | InstantiationException
         | IllegalAccessException e) {
       throw new RuntimeException(e);
@@ -77,6 +76,15 @@ public class MethodCallHandler {
       throw new RuntimeException(
           "There may be a compile error in the generated code."
               + " Try generating using the JSON schema from the test. "
+              + e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(
+          "There is a problem with calling this method.\r\n\t"
+              + "Check that the generated method "
+              + methodName
+              + " can cope with these parameters: "
+              + parameters
+              + ". \r\n\t"
               + e);
     }
   }
