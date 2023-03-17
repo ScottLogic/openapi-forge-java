@@ -107,14 +107,16 @@ public class MethodCallHandler {
   }
 
   public String getPropertyOnObject(
-      String propName, MethodResponse latestResponse, String latestResponseType) {
+      String propName,
+      Object resultOfMethodCall,
+      String latestResponseType,
+      ClassLoader classLoader) {
     try {
       Class<?> propClass =
-          Class.forName(
-              packageName + "." + latestResponseType, true, latestResponse.getClassLoader());
+          Class.forName(packageName + "." + latestResponseType, false, classLoader);
       Method getProp = propClass.getDeclaredMethod("get" + StringUtils.capitalize(propName));
       getProp.setAccessible(true); // Otherwise causes IllegalAccessException.
-      return getProp.invoke(latestResponse.getResultOfMethodCall()).toString();
+      return getProp.invoke(resultOfMethodCall).toString();
     } catch (ClassNotFoundException
         | NoSuchMethodException
         | IllegalAccessException

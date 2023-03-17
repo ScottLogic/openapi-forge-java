@@ -7,8 +7,6 @@ import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.hamcrest.CoreMatchers;
-
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +15,6 @@ import java.util.List;
 
 public class ComponentsFeature {
   private MethodResponse latestResponse;
-  private String latestResponseType;
   private int latestServerIndex = 0;
   private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
   private JavaTypeToGenericType javaTypeToGenericType = new JavaTypeToGenericType();
@@ -32,8 +29,13 @@ public class ComponentsFeature {
 
   @Then("the response should be of type {word}")
   public void response_of_type(String type) {
-    latestResponseType = latestResponse.getResultOfMethodCall().getClass().getSimpleName();
-    assertEquals(type, latestResponse.getResultOfMethodCall().getClass().getSimpleName());
+    final String actualType;
+    if (latestExtractedIndex == null) {
+      actualType = latestResponse.getResultOfMethodCall().getClass().getSimpleName();
+    } else {
+      actualType = latestExtractedIndex.getClass().getSimpleName();
+    }
+    assertEquals(type, actualType);
   }
 
   @Then("it should generate a model object named {word}")
@@ -51,26 +53,34 @@ public class ComponentsFeature {
   public void theResponseShouldBeAnArray() {
     String reason =
         latestResponse.getResultOfMethodCall().getClass().getSimpleName() + " is not an array type";
-    assertThat(
-        reason,
-        isListType(latestResponse.getResultOfMethodCall().getClass()));
+    assertThat(reason, isListType(latestResponse.getResultOfMethodCall().getClass()));
   }
 
   @When("extracting the object at index {int}")
   public void extractingTheObjectAtIndex(int index) {
     Object list = latestResponse.getResultOfMethodCall();
     if (isListType(list.getClass())) {
-      // TODO: Use this, or change this method to set the latestResponse.
-      latestExtractedIndex = ((List<?>)list).get(index);
+      latestExtractedIndex = ((List<?>) list).get(index);
     } else {
-      throw new UnsupportedOperationException("Only List types are supported in this step, not strict array types");
+      throw new UnsupportedOperationException(
+          "Only List types are supported in this step, not strict array types");
     }
   }
 
   @And("the response should have a property {word} with value {word}")
   public void response_should_have_property(String propName, String propValue) {
+    final Object partOfResponseToInspect;
+    if (latestExtractedIndex == null) {
+      partOfResponseToInspect = latestResponse.getResultOfMethodCall();
+    } else {
+      partOfResponseToInspect = latestExtractedIndex;
+    }
     String actualProp =
-        methodCallHandler.getPropertyOnObject(propName, latestResponse, latestResponseType);
+        methodCallHandler.getPropertyOnObject(
+            propName,
+            partOfResponseToInspect,
+            partOfResponseToInspect.getClass().getSimpleName(),
+            latestResponse.getClassLoader());
     assertEquals(propValue, actualProp);
   }
 
@@ -166,7 +176,6 @@ public class ComponentsFeature {
   @After
   public void after() {
     latestResponse = null;
-    latestResponseType = null;
     latestServerIndex = 0;
     latestExtractedIndex = null;
     methodCallHandler = new MethodCallHandler(new TypeConverter());
