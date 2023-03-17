@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.util.StringUtils;
 
 public class ComponentsFeature {
   private MethodResponse latestResponse;
@@ -178,6 +179,26 @@ public class ComponentsFeature {
   @Then("the response should be null")
   public void the_response_should_be_null() {
     assertNull(latestResponse.getResultOfMethodCall());
+  }
+
+  @Then("the api file with tag {string} exists")
+  public void the_api_file_with_tag_exists(String tag)
+      throws MalformedURLException, ClassNotFoundException {
+    assertTrue(methodCallHandler.doesClassExist("ApiClient" + StringUtils.capitalize(tag)));
+  }
+
+  @And("the method {string} should be present in the api file with tag {string}")
+  public void the_method_should_be_present_in_the_api_file_with_tag(String method, String tag)
+      throws MalformedURLException, ClassNotFoundException {
+    assertTrue(methodCallHandler.classHasMethod("ApiClient" + StringUtils.capitalize(tag), method));
+  }
+
+  @And("the method {string} should not be present in the api file with tag {string}")
+  public void the_method_should_not_be_present_in_the_api_file_with_tag(String method, String tag)
+      throws MalformedURLException, ClassNotFoundException {
+    String className = "ApiClient" + StringUtils.capitalize(tag);
+    assertTrue(methodCallHandler.doesClassExist(className));
+    assertFalse(methodCallHandler.classHasMethod(className, method));
   }
 
   private boolean isListType(Class<?> type) {

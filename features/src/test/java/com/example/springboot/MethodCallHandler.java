@@ -148,6 +148,15 @@ public class MethodCallHandler {
     return clazz.getField(propertyName).getGenericType().getTypeName();
   }
 
+  public boolean classHasMethod(String className, String methodName)
+      throws ClassNotFoundException, MalformedURLException {
+    compileFilesInPackage();
+    ClassLoader classLoader = createClassLoaderForPackage();
+    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+    return Arrays.stream(clazz.getDeclaredMethods())
+        .anyMatch(method -> method.getName().equals(methodName));
+  }
+
   private void compileFilesInPackage() {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     File srcMain = new File("src/main/java/" + packageName.replaceAll("\\.", "/"));
