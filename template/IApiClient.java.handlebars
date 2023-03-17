@@ -1,4 +1,4 @@
-package com.example.springboot;
+package {{_options.[generator.package]}};
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ import java.util.HashMap;
       {{#each _sortedParameters}}
       // <param name="{{name}}">{{description}}</param>
       {{/each}}
-    public {{safeTypeConvert _response.schema}} {{operationId}}(
+    public HttpResponse<{{safeTypeConvert _response.schema}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
             {{~safeTypeConvert schema}} {{toParamName name ~}}
             {{~#unless @last}}, {{/unless ~}}

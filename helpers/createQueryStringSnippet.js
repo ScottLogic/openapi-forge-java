@@ -16,9 +16,8 @@ const isStringArrayParam = (param) =>
 
 const serialiseArrayParam = (param) => {
   const safeParamName = toParamName(param.name);
-  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p -> "${
-    param.name
-  }=".concat(${
+  const serialisedParam = `String.join("&", ${safeParamName}.stream().map(p -> 
+  "${param.name}=".concat(${
     isStringArrayParam(param)
       ? "java.net.URLEncoder.encode(p, StandardCharsets.UTF_8)"
       : "p"
@@ -26,7 +25,7 @@ const serialiseArrayParam = (param) => {
 
   return `${indent}if (${safeParamName} != null && ${safeParamName}.size() > 0)
 ${indent}{
-    ${prefixSerialisedQueryParam(serialisedParam)}
+    ${prefixSerialisedQueryParam(serialisedParam, safeParamName)}
 ${indent}}`;
 };
 
@@ -34,17 +33,25 @@ const serialiseObjectParam = (param) => {
   const safeParamName = toParamName(param.name);
   let serialisedObject = "";
   for (const [propName, objProp] of Object.entries(param.schema.properties)) {
-    let serialisedParam = isStringType(objProp)
-      ? `${safeParamName}.${propName} == null ? "" : "${propName}=" + java.net.URLEncoder.encode(${safeParamName}.${propName}, StandardCharsets.UTF_8)`
-      : `${propName}={${safeParamName}.${propName}}`;
-
-    serialisedObject += serialisedParam + "&";
+    let optional_amp = serialisedObject.length == 0 ? "" : `"&"+`;
+    // open first parantheses for the conditional to make it easy to read
+    // open second parantheses for making sure to combine the string in a conditional block
+    let serialisedParam =
+      `(` +
+      `${safeParamName}.${propName} == null ? "" : (` +
+      optional_amp +
+      `"${propName}="`;
+    let suffix = isStringType(objProp)
+      ? `+ java.net.URLEncoder.encode(${safeParamName}.${propName}, StandardCharsets.UTF_8)`
+      : `+ ${safeParamName}.${propName}`;
+    // close both parantheses
+    serialisedObject += serialisedParam + suffix + "))+";
   }
 
-  return `${indent}if (${safeParamName} != null)
-${indent}{
-    ${prefixSerialisedQueryParam(serialisedObject.slice(0, -1))}
-${indent}}`;
+  return `${indent}
+${indent}
+    ${prefixSerialisedQueryParam(serialisedObject.slice(0, -1), safeParamName)}
+${indent}`;
 };
 
 const serialisePrimitive = (param) => {
@@ -54,13 +61,15 @@ const serialisePrimitive = (param) => {
     : "String.valueOf(" + safeParamName + ")";
 
   const serialisedParam = prefixSerialisedQueryParam(
-    `"${param.name}=".concat(${escaped})`
+    `"${param.name}=".concat(${escaped})`,
+    safeParamName
   );
   return serialisedParam;
 };
 
-const prefixSerialisedQueryParam = (serialisedQueryParam) =>
-  `${indent}queryString.append((queryString.length() == 0 ? "?" : "&").concat(${serialisedQueryParam}));`;
+const prefixSerialisedQueryParam = (serialisedQueryParam, safeParamName) => {
+  return `if (${safeParamName} != null) { ${indent}queryString.append((queryString.length() == 0 ? "?" : "&").concat(${serialisedQueryParam})); }`;
+};
 
 const createQueryStringSnippet = (params) => {
   const queryParams = getParametersByType(params, "query");
