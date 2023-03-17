@@ -139,6 +139,12 @@ public class ComponentsFeature {
     latestResponse = methodCallHandler.callMethod(method, parameters, "null", latestServerIndex);
   }
 
+  @When("calling the method {word} and the server provides an empty response")
+  public void calling_the_method_and_the_server_provides_an_empty_response(String method) {
+    latestResponse =
+        methodCallHandler.callMethod(method, new ArrayList<>(), "null", latestServerIndex);
+  }
+
   @When("selecting the server at index {int}")
   public void selecting_the_server_at_index(int serverIndex) {
     latestServerIndex = serverIndex;
@@ -167,6 +173,11 @@ public class ComponentsFeature {
   @Then("the request should have a body with value {}")
   public void the_request_should_have_a_body_with_value(String expectedBodyAsString) {
     assertEquals(expectedBodyAsString, latestResponse.getRequestBodyAsString());
+  }
+
+  @Then("the response should be null")
+  public void the_response_should_be_null() {
+    assertNull(latestResponse.getResultOfMethodCall());
   }
 
   private boolean isListType(Class<?> type) {
