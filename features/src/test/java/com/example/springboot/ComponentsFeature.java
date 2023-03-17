@@ -40,8 +40,7 @@ public class ComponentsFeature {
   }
 
   @Then("it should generate a model object named {word}")
-  public void it_should_generate_a_model_object_named(String modelObjectName)
-      throws ClassNotFoundException, MalformedURLException {
+  public void it_should_generate_a_model_object_named(String modelObjectName) {
     assertTrue(methodCallHandler.doesClassExist(modelObjectName));
   }
 
@@ -182,14 +181,17 @@ public class ComponentsFeature {
   }
 
   @Then("the api file with tag {string} exists")
-  public void the_api_file_with_tag_exists(String tag)
-      throws MalformedURLException, ClassNotFoundException {
+  public void the_api_file_with_tag_exists(String tag) {
     assertTrue(methodCallHandler.doesClassExist("ApiClient" + StringUtils.capitalize(tag)));
   }
 
+  @Then("the api file with tag {string} does not exist")
+  public void the_api_file_with_tag_does_not_exist(String tag) {
+    assertFalse(methodCallHandler.doesClassExist("ApiClient" + StringUtils.capitalize(tag)));
+  }
+
   @And("the method {string} should be present in the api file with tag {string}")
-  public void the_method_should_be_present_in_the_api_file_with_tag(String method, String tag)
-      throws MalformedURLException, ClassNotFoundException {
+  public void the_method_should_be_present_in_the_api_file_with_tag(String method, String tag) {
     assertTrue(methodCallHandler.classHasMethod("ApiClient" + StringUtils.capitalize(tag), method));
   }
 

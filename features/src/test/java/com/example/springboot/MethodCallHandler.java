@@ -125,10 +125,16 @@ public class MethodCallHandler {
     }
   }
 
-  public boolean doesClassExist(String className)
-      throws ClassNotFoundException, MalformedURLException {
+  public boolean doesClassExist(String className) {
     compileFilesInPackage();
-    Class.forName(packageName + "." + className, false, createClassLoaderForPackage());
+    try {
+      Class.forName(packageName + "." + className, false, createClassLoaderForPackage());
+    } catch (ClassNotFoundException e) {
+      return false;
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(
+          "This error is most likely due to a bug in the test code itself\r\n\t" + e);
+    }
     return true;
   }
 
@@ -148,13 +154,17 @@ public class MethodCallHandler {
     return clazz.getField(propertyName).getGenericType().getTypeName();
   }
 
-  public boolean classHasMethod(String className, String methodName)
-      throws ClassNotFoundException, MalformedURLException {
+  public boolean classHasMethod(String className, String methodName) {
     compileFilesInPackage();
-    ClassLoader classLoader = createClassLoaderForPackage();
-    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
-    return Arrays.stream(clazz.getDeclaredMethods())
-        .anyMatch(method -> method.getName().equals(methodName));
+    try {
+      ClassLoader classLoader = createClassLoaderForPackage();
+      Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
+      return Arrays.stream(clazz.getDeclaredMethods())
+          .anyMatch(method -> method.getName().equals(methodName));
+    } catch (MalformedURLException | ClassNotFoundException e) {
+      throw new RuntimeException(
+          "This error is most likely due to a bug in the test code itself\r\n\t" + e);
+    }
   }
 
   private void compileFilesInPackage() {
