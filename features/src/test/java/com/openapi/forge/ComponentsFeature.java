@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

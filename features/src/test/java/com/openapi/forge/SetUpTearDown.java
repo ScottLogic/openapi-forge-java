@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;

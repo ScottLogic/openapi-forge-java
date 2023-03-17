@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 public class JavaTypeToGenericType {
   public String convert(String javaType) {

@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 public class ModelFeature {
   //  @When("generating an API from the following specification")

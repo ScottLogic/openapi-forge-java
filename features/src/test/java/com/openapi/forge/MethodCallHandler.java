@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

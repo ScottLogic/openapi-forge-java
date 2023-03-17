@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
@@ -10,7 +10,7 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("com/example/springboot")
+@SelectClasspathResource("com/openapi/forge")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example.springboot")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.openapi.forge")
 public class RunCucumberTest {}

@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 public class HTTPVerbsFeature {
   //  @When("calling the spied method {word} without params")

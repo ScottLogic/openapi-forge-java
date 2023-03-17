@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 public class ConfigurationFeature {
   //  private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());

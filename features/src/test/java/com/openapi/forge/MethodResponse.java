@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 import java.io.IOException;
 import java.util.Objects;

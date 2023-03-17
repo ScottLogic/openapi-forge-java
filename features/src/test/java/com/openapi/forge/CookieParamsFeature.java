@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.openapi.forge;
 
 public class CookieParamsFeature {
   //  @When("calling the method cookieParameters with parameters {string}}")
