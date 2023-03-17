@@ -51,7 +51,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     ) throws IOException{{#if (bodyParameterExists _sortedParameters)}}, JsonProcessingException{{/if}}{{#if (complexReturnType _response.schema)}}, JsonMappingException{{/if}}
     {
         {{#each _sortedParameters}}
-            {{#if (hasDefault schema.default)}}
+            {{#if (hasDefault schema)}}
             // Set default value for {{toParamName name}}
             if ({{toParamName name ~}} == null) { {{toParamName name ~}} = {{{quoteIfString schema.default}}}; } 
             {{/if ~}}

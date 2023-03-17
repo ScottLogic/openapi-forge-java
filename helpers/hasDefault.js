@@ -1,2 +1,2 @@
-const hasDefault = (defaultVal) => defaultVal !== undefined;
+const hasDefault = (defaultVal) => defaultVal.default !== undefined;
 module.exports = hasDefault;
