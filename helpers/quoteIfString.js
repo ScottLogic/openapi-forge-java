@@ -1,9 +1,3 @@
-function quoteIfString(prop) {
-    // check if prop is a string
-    if (typeof prop === "string") {
-      return `"${prop}"`;
-    }
-    return prop;
-  }
+const quoteIfString = (prop) => (typeof prop === "string") ? `"${prop}"` : prop
   
   module.exports = quoteIfString;
