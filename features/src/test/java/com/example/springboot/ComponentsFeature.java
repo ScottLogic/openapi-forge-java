@@ -18,7 +18,7 @@ public class ComponentsFeature {
   private int latestServerIndex = 0;
   private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
   private JavaTypeToGenericType javaTypeToGenericType = new JavaTypeToGenericType();
-  private Object latestExtractedIndex;
+  private Object relevantPartOfResponse;
 
   @When("calling the method {word} and the server responds with")
   public void calling_method_server_responds(String method, String response) {
@@ -30,10 +30,10 @@ public class ComponentsFeature {
   @Then("the response should be of type {word}")
   public void response_of_type(String type) {
     final String actualType;
-    if (latestExtractedIndex == null) {
+    if (relevantPartOfResponse == null) {
       actualType = latestResponse.getResultOfMethodCall().getClass().getSimpleName();
     } else {
-      actualType = latestExtractedIndex.getClass().getSimpleName();
+      actualType = relevantPartOfResponse.getClass().getSimpleName();
     }
     assertEquals(type, actualType);
   }
@@ -60,7 +60,7 @@ public class ComponentsFeature {
   public void extractingTheObjectAtIndex(int index) {
     Object list = latestResponse.getResultOfMethodCall();
     if (isListType(list.getClass())) {
-      latestExtractedIndex = ((List<?>) list).get(index);
+      relevantPartOfResponse = ((List<?>) list).get(index);
     } else {
       throw new UnsupportedOperationException(
           "Only List types are supported in this step, not strict array types");
@@ -70,10 +70,10 @@ public class ComponentsFeature {
   @And("the response should have a property {word} with value {word}")
   public void response_should_have_property(String propName, String propValue) {
     final Object partOfResponseToInspect;
-    if (latestExtractedIndex == null) {
+    if (relevantPartOfResponse == null) {
       partOfResponseToInspect = latestResponse.getResultOfMethodCall();
     } else {
-      partOfResponseToInspect = latestExtractedIndex;
+      partOfResponseToInspect = relevantPartOfResponse;
     }
     String actualProp =
         methodCallHandler.getPropertyOnObject(
@@ -188,7 +188,7 @@ public class ComponentsFeature {
   public void after() {
     latestResponse = null;
     latestServerIndex = 0;
-    latestExtractedIndex = null;
+    relevantPartOfResponse = null;
     methodCallHandler = new MethodCallHandler(new TypeConverter());
   }
 }
