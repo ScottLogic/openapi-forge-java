@@ -11,8 +11,16 @@ Configuration configuration = new Configuration();
 configuration.basePath = "https://petstore3.swagger.io";
 OkHttpClient client = new OkHttpClient();
 ApiClientPet apiClientPet = new ApiClientPet(client, configuration);
-List<Pet> pets = apiClientPet.findPetsByStatus("available");
-System.out.println(pets.stream().map(x -> x.getName()).collect(Collectors.toList()));
+HttpResponse<List<Pet>> pets = apiClientPet.findPetsByStatus("available");
+System.out.println(pets.data.stream().map(x -> x.getName()).collect(Collectors.toList()));
+```
+
+You should also add the additional imports before the class statement.
+
+```java
+import java.util.List;
+import java.util.stream.Collectors;
+import okhttp3.OkHttpClient;
 ```
 
 ## Requirements
