@@ -16,9 +16,17 @@ public class TypeConverter {
     return convertedValues;
   }
 
-  private Object convertValue(String value, Class<?> type) {
+  public Object convertValue(String value, Class<?> type) {
     if (value == null) {
       return null;
+    } else if (type == int.class) {
+      return Integer.parseInt(value);
+    } else if (type == long.class) {
+      return Long.parseLong(value);
+    } else if (type == double.class) {
+      return Double.parseDouble(value);
+    } else if (type == float.class) {
+      return Float.parseFloat(value);
     } else if (type == Integer.class) {
       return Integer.valueOf(value);
     } else if (type == Long.class) {

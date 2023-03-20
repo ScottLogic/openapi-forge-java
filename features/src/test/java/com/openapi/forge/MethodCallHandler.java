@@ -60,12 +60,16 @@ public class MethodCallHandler {
               .findFirst()
               .orElseThrow();
 
-      Object[] convertedParameters =
-          typeConverter.convertBoxedTypes(
-              parameters.toArray(new String[0]), methodWithParameters.getParameterTypes());
-      Object objectResponse =
-          methodWithParameters.invoke(
-              apiClient, convertedParameters); // ONLY WORKS WITH BOXED VALUES
+//      Object[] convertedParameters =
+//          typeConverter.convertBoxedTypes(
+//              parameters.toArray(new String[0]), methodWithParameters.getParameterTypes());
+//      Object objectResponse =
+//          methodWithParameters.invoke(
+//              apiClient, convertedParameters); // ONLY WORKS WITH BOXED VALUES
+
+      // TODO:
+            Object objectResponse = callMethodWithParameters(methodWithParameters, apiClient,
+       parameters);
       return new MethodResponse(objectResponse, requestArgumentCaptor.getValue(), classLoader);
     } catch (IOException
         | NoSuchMethodException
@@ -88,6 +92,30 @@ public class MethodCallHandler {
               + e);
     }
   }
+
+    private Object callMethodWithParameters(Method methodWithParameters, Object apiClient,
+   List<String> parameters) throws InvocationTargetException, IllegalAccessException {
+      final int MAX_PARAM_SIZE = 2;
+      if (parameters.size() > MAX_PARAM_SIZE) {
+        throw new UnsupportedOperationException(
+                "Parameter types may be primitives, so we must handle each number of parameters differently. Currently this test supports a maximum of " +
+                MAX_PARAM_SIZE +
+                " parameters.");
+      }
+      if (parameters.size() == 0) {
+        return
+            methodWithParameters.invoke(apiClient);
+      } else if (parameters.size() == 1) {
+        Class<?> type = methodWithParameters.getParameterTypes()[0];
+        return methodWithParameters.invoke(apiClient,
+          typeConverter.convertValue(parameters.get(0), type)); // TODO: WIll this work? We are converting a primitive to an Object here
+      } else {
+        Class<?> type0 = methodWithParameters.getParameterTypes()[0];
+        Class<?> type1 = methodWithParameters.getParameterTypes()[1];
+        return methodWithParameters.invoke(apiClient,
+                typeConverter.convertValue(parameters.get(0), type0), typeConverter.convertValue(parameters.get(1), type1));
+      }
+    }
 
   private ClassLoader createClassLoaderForPackage() throws MalformedURLException {
     File root = new File("src/main/java/");
