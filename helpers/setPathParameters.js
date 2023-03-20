@@ -19,20 +19,21 @@ const setPathParameters = (path, sortedParams) => {
       }
 
       const safeParamName = toParamName(captureGroup);
+      const URL_SAFE_COMMA = "%2C";
       switch (pathParam.schema.type) {
         case "array":
-          return `{string.Join("%2C", ${safeParamName})}`;
+          return `" + String.join("${URL_SAFE_COMMA}", ${safeParamName}) + "`;
         case "object": {
           let serialisedObject = "";
           for (const [propName] of Object.entries(
             pathParam.schema.properties
           )) {
-            serialisedObject += `${propName}%2C{${safeParamName}.${propName}}%2C`;
+            serialisedObject += `${propName}${URL_SAFE_COMMA}" + ${safeParamName}.${propName} + "${URL_SAFE_COMMA}`;
           }
           return serialisedObject.slice(0, -3);
         }
         default:
-          return `{${safeParamName}}`;
+          return `" + ${safeParamName} + "`;
       }
     })
   );
