@@ -35,7 +35,7 @@ import java.util.HashMap;
       {{#each _sortedParameters}}
       // <param name="{{name}}">{{description}}</param>
       {{/each}}
-    public HttpResponse<{{safeTypeConvert _response.schema}}> {{operationId}}(
+    public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
             {{~safeTypeConvert schema}} {{toParamName name ~}}
             {{~#unless @last}}, {{/unless ~}}
