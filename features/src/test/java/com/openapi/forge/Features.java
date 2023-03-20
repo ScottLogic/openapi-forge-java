@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.util.StringUtils;
 
-public class ComponentsFeature {
+public class Features {
   private MethodResponse latestResponse;
   private int latestServerIndex = 0;
   private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
-  private JavaTypeToGenericType javaTypeToGenericType = new JavaTypeToGenericType();
+  private final JavaTypeToGenericType javaTypeToGenericType = new JavaTypeToGenericType();
   private Object relevantPartOfResponse;
 
   @When("calling the method {word} and the server responds with")
@@ -196,8 +196,7 @@ public class ComponentsFeature {
   }
 
   @And("the method {string} should not be present in the api file with tag {string}")
-  public void the_method_should_not_be_present_in_the_api_file_with_tag(String method, String tag)
-      throws MalformedURLException, ClassNotFoundException {
+  public void the_method_should_not_be_present_in_the_api_file_with_tag(String method, String tag) {
     String className = "ApiClient" + StringUtils.capitalize(tag);
     assertTrue(methodCallHandler.doesClassExist(className));
     assertFalse(methodCallHandler.classHasMethod(className, method));
