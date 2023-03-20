@@ -1,6 +1,7 @@
 package com.openapi.forge;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Objects;
 import okhttp3.Headers;
 import okhttp3.Request;
@@ -18,6 +19,16 @@ public class MethodResponse {
   }
 
   public Object getResultOfMethodCall() {
+    Class<?> clazz = resultOfMethodCall.getClass();
+    if (clazz.getSimpleName().equals("HttpResponse")) {
+      try {
+        Field data = clazz.getDeclaredField("data");
+        data.setAccessible(true);
+        return data.get(resultOfMethodCall);
+      } catch (NoSuchFieldException | IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
+    }
     return resultOfMethodCall;
   }
 

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.util.StringUtils;
 
-public class Features {
+public class StepDefinitions {
   private MethodResponse latestResponse;
   private int latestServerIndex = 0;
   private MethodCallHandler methodCallHandler = new MethodCallHandler(new TypeConverter());
