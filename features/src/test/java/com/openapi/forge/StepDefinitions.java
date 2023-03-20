@@ -8,10 +8,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.springframework.util.StringUtils;
 
 public class StepDefinitions {
@@ -25,7 +23,15 @@ public class StepDefinitions {
   public void calling_method_server_responds(String method, String response) {
     // Prepare for later steps:
     latestResponse =
-        methodCallHandler.callMethod(method, new ArrayList<>(), response, latestServerIndex);
+        methodCallHandler.callMethod(
+            method, new ArrayList<>(), response, new HashMap<>(), latestServerIndex);
+  }
+
+  @When("calling the method {word} and the server responds with headers")
+  public void calling_method_server_responds_with_headers(String method, String headers) {
+    latestResponse =
+        methodCallHandler.callMethod(
+            method, new ArrayList<>(), "null", deserialiseHeaders(headers), latestServerIndex);
   }
 
   @Then("the response should be of type {word}")
@@ -113,37 +119,46 @@ public class StepDefinitions {
   @When("calling the method {word} with parameters {string}")
   public void calling_the_method_with(String method, String rawParameters) {
     List<String> parameters = Arrays.stream(rawParameters.split(",")).toList();
-    latestResponse = methodCallHandler.callMethod(method, parameters, "null", latestServerIndex);
+    latestResponse =
+        methodCallHandler.callMethod(
+            method, parameters, "null", new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} without params")
   public void calling_the_method_without(String method) {
     latestResponse =
-        methodCallHandler.callMethod(method, new ArrayList<>(), "null", latestServerIndex);
+        methodCallHandler.callMethod(
+            method, new ArrayList<>(), "null", new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the spied method {word} without params")
   public void calling_the_spied_method_without(String method) {
     latestResponse =
-        methodCallHandler.callMethod(method, new ArrayList<>(), "null", latestServerIndex);
+        methodCallHandler.callMethod(
+            method, new ArrayList<>(), "null", new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} with object {}")
   public void calling_the_method_with_object(String method, String objectAsString) {
     List<String> parameters = Collections.singletonList(objectAsString);
-    latestResponse = methodCallHandler.callMethod(method, parameters, "null", latestServerIndex);
+    latestResponse =
+        methodCallHandler.callMethod(
+            method, parameters, "null", new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} with array {string}")
   public void calling_the_method_with_array(String method, String arrayAsString) {
     List<String> parameters = Collections.singletonList(arrayAsString);
-    latestResponse = methodCallHandler.callMethod(method, parameters, "null", latestServerIndex);
+    latestResponse =
+        methodCallHandler.callMethod(
+            method, parameters, "null", new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} and the server provides an empty response")
   public void calling_the_method_and_the_server_provides_an_empty_response(String method) {
     latestResponse =
-        methodCallHandler.callMethod(method, new ArrayList<>(), "null", latestServerIndex);
+        methodCallHandler.callMethod(
+            method, new ArrayList<>(), "null", new HashMap<>(), latestServerIndex);
   }
 
   @When("selecting the server at index {int}")
@@ -163,12 +178,18 @@ public class StepDefinitions {
 
   @Then("the request header should have a cookie property with value {word}")
   public void the_request_header_should_have_a_cookie_property_with_value(String expectedHeader) {
-    assertEquals(expectedHeader, latestResponse.getHeaders().get("cookie"));
+    assertEquals(expectedHeader, latestResponse.getRequestHeaders().get("cookie"));
   }
 
   @Then("the request should have a header property with value {word}")
   public void the_request_should_have_a_header_property_with_value(String expectedHeader) {
-    assertEquals(expectedHeader, latestResponse.getHeaders().get("test"));
+    assertEquals(expectedHeader, latestResponse.getRequestHeaders().get("test"));
+  }
+
+  @Then("the response should have a header {word} with value {word}")
+  public void the_request_should_have_a_header_property_with_value(
+      String headerName, String expectedHeader) {
+    assertEquals(expectedHeader, latestResponse.getResponseHeaders().get(headerName));
   }
 
   @Then("the request should have a body with value {}")
@@ -214,6 +235,24 @@ public class StepDefinitions {
       return quoted.substring(1, quoted.length() - 1);
     }
     return quoted;
+  }
+
+  private Map<String, String> deserialiseHeaders(String headersString) {
+    // headerString examples: `{"foo": "bar"}` and `{"foo": "bar", "fizz": "buzz"}`
+    String headersSimple =
+        headersString
+            .replaceAll("\\s+", "")
+            .replaceAll("\\{", "")
+            .replaceAll("}", "")
+            .replaceAll("\"", "");
+    // From https://stackoverflow.com/a/40004122/:
+    return Arrays.stream(headersSimple.split(","))
+        .map(s -> s.split(":"))
+        .collect(
+            Collectors.toMap(
+                a -> a[0], // key
+                a -> a[1] // value
+                ));
   }
 
   @After

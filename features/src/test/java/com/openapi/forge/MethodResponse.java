@@ -1,42 +1,34 @@
 package com.openapi.forge;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Objects;
 import okhttp3.Headers;
 import okhttp3.Request;
 import okio.Buffer;
 
 public class MethodResponse {
-  private final Object resultOfMethodCall;
+  private final Object responseData;
+  private final Headers responseHeaders;
   private final Request request;
   private final ClassLoader classLoader;
 
-  MethodResponse(Object resultOfMethodCall, Request request, ClassLoader classLoader) {
-    this.resultOfMethodCall = resultOfMethodCall;
+  MethodResponse(
+      Request request, Object responseData, Headers responseHeaders, ClassLoader classLoader) {
+    this.responseData = responseData;
+    this.responseHeaders = responseHeaders;
     this.request = request;
     this.classLoader = classLoader;
   }
 
   public Object getResultOfMethodCall() {
-    Class<?> clazz = resultOfMethodCall.getClass();
-    if (clazz.getSimpleName().equals("HttpResponse")) {
-      try {
-        Field data = clazz.getDeclaredField("data");
-        data.setAccessible(true);
-        return data.get(resultOfMethodCall);
-      } catch (NoSuchFieldException | IllegalAccessException e) {
-        throw new RuntimeException(e);
-      }
-    }
-    return resultOfMethodCall;
+    return responseData;
   }
 
   public String getUrlRequested() {
     return request.url().toString();
   }
 
-  public Headers getHeaders() {
+  public Headers getRequestHeaders() {
     return request.headers();
   }
 
@@ -50,6 +42,10 @@ public class MethodResponse {
 
   public ClassLoader getClassLoader() {
     return classLoader;
+  }
+
+  public Headers getResponseHeaders() {
+    return responseHeaders;
   }
 
   // https://stackoverflow.com/a/29033727/
