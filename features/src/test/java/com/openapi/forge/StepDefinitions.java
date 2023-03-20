@@ -46,7 +46,8 @@ public class StepDefinitions {
 
   @Then("the response should be equal to {string}")
   public void response_should_be_equal_to(String expectedResponse) {
-    assertEquals(expectedResponse, latestResponse.getResultOfMethodCall());
+    assertEquals(
+        expectedResponse, stripQuotesIfPresent(latestResponse.getResultOfMethodCall().toString()));
   }
 
   @Then("the response should be an array")
@@ -204,6 +205,15 @@ public class StepDefinitions {
 
   private boolean isListType(Class<?> type) {
     return type.getSimpleName().contains("List");
+  }
+
+  private String stripQuotesIfPresent(String quoted) {
+    if (quoted.length() > 2
+        && quoted.charAt(0) == '"'
+        && quoted.charAt(quoted.length() - 1) == '"') {
+      return quoted.substring(1, quoted.length() - 1);
+    }
+    return quoted;
   }
 
   @After
