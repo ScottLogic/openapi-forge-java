@@ -36,7 +36,7 @@ public class MethodResponse {
     return request.url().toString();
   }
 
-  public Headers getHeaders() {
+  public Headers getRequestHeaders() {
     return request.headers();
   }
 
@@ -50,6 +50,11 @@ public class MethodResponse {
 
   public ClassLoader getClassLoader() {
     return classLoader;
+  }
+
+  public Headers getResponseHeaders() {
+    return null; // TODO: How to get these?
+//    return resultOfMethodCall .headers();
   }
 
   // https://stackoverflow.com/a/29033727/

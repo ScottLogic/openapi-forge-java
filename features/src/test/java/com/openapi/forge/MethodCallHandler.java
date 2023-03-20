@@ -1,5 +1,6 @@
 package com.openapi.forge;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +13,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import okhttp3.*;
@@ -31,22 +34,22 @@ public class MethodCallHandler {
     // Putting null without quotes here is incorrect! We're just trying to keep the JSON
     // serialiser/deserialiser
     // happy with our mocks.
-    return callMethod(methodName, parameters, "null", 0);
+    return callMethod(methodName, parameters, "null", null, 0);
   }
 
   protected MethodResponse callMethod(String methodName, List<String> parameters, String response)
       throws RuntimeException {
-    return callMethod(methodName, parameters, response, 0);
+    return callMethod(methodName, parameters, response, null, 0);
   }
 
   protected MethodResponse callMethod(
-      String methodName, List<String> parameters, String response, int serverIndex)
+      String methodName, List<String> parameters, String response, String headers, int serverIndex)
       throws RuntimeException {
     try {
       OkHttpClient mockHttp = mock(OkHttpClient.class);
       ArgumentCaptor<Request> requestArgumentCaptor = ArgumentCaptor.forClass(Request.class);
 
-      createOkHttpMocks(response, mockHttp, requestArgumentCaptor);
+      createOkHttpMocks(response, headers, mockHttp, requestArgumentCaptor);
       compileFilesInPackage();
       ClassLoader classLoader = createClassLoaderForPackage();
 
@@ -95,15 +98,50 @@ public class MethodCallHandler {
   }
 
   private void createOkHttpMocks(
-      String response, OkHttpClient mockHttp, ArgumentCaptor<Request> requestArgumentCaptor)
+      String response,
+      String headersString,
+      OkHttpClient mockHttp,
+      ArgumentCaptor<Request> requestArgumentCaptor)
       throws IOException {
     Response mockResponse = mock(Response.class);
     ResponseBody mockResponseBody = mock(ResponseBody.class);
     when(mockResponse.body()).thenReturn(mockResponseBody);
     when(mockResponseBody.string()).thenReturn(response);
+    Headers mockHeaders = mock(Headers.class);
+    // headersString: {"foo": "bar"}
+    if (headersString != null) {
+      System.err.println(headersString);
+      System.err.println(headersString.substring(1, headersString.length() - 1));
+      Map<String, String> allHeaders =
+          Arrays.stream(headersString.substring(1, headersString.length() - 1).split(","))
+              .map(s -> s.split(":"))
+              .collect(
+                  Collectors.toMap(
+                      a -> stripQuotesIfPresent(a[0].replaceAll("\\s+", "")), // key
+                      a -> stripQuotesIfPresent(a[1].replaceAll("\\s+", "")) // value
+                      ));
+      //    Map<String, String> allHeaders =
+      //        (Map<String, String>) typeConverter.convertValue(headersString, Map.class);
+      for (String key : allHeaders.keySet()) {
+        System.err.println(key);
+        System.err.println(allHeaders.get(key));
+        when(mockHeaders.get(eq(key))).thenReturn(allHeaders.get(key));
+      }
+    }
+    when(mockResponse.headers()).thenReturn(mockHeaders);
     Call mockCall = mock(Call.class);
     when(mockHttp.newCall(requestArgumentCaptor.capture())).thenReturn(mockCall);
     when(mockCall.execute()).thenReturn(mockResponse);
+  }
+
+  private String stripQuotesIfPresent(String quoted) {
+    System.err.println(quoted);
+    if (quoted.length() > 2
+        && quoted.charAt(0) == '"'
+        && quoted.charAt(quoted.length() - 1) == '"') {
+      return quoted.substring(1, quoted.length() - 1);
+    }
+    return quoted;
   }
 
   public String getPropertyOnObject(

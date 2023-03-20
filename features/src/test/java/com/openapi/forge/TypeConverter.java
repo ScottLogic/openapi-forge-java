@@ -16,7 +16,7 @@ public class TypeConverter {
     return convertedValues;
   }
 
-  private Object convertValue(String value, Class<?> type) {
+  public Object convertValue(String value, Class<?> type) {
     if (value == null) {
       return null;
     } else if (type == Integer.class) {
