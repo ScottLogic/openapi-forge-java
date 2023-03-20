@@ -1,4 +1,4 @@
 const queryType = (httpVerb) =>
-  `.method("${httpVerb}", RequestBody.create("", null))`;
+  `.method("${httpVerb.toUpperCase()}", null)`;
 
 module.exports = queryType;
