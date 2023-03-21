@@ -143,10 +143,9 @@ public class MethodCallHandler {
       Method getProp = propClass.getDeclaredMethod("get" + StringUtils.capitalize(propName));
       getProp.setAccessible(true); // Otherwise causes IllegalAccessException.
       return getProp.invoke(resultOfMethodCall).toString();
-    } catch (ClassNotFoundException
-        | NoSuchMethodException
-        | IllegalAccessException
-        | InvocationTargetException e) {
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException("This is probably an issue with the test code:\t\r\n" + e);
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
   }
