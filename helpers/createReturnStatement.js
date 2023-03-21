@@ -21,7 +21,7 @@ const createReturnStatement = (responseSchema) => {
     case "float":
     case "double":
     case "Date":
-      returnStatement = `${responseType}.Parse(responseBody)`;
+      returnStatement = `${responseType}.parse(responseBody)`;
       break;
     case "String":
       returnStatement = "responseBodyString";
