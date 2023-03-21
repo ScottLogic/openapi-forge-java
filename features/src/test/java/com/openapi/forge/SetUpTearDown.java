@@ -34,7 +34,6 @@ public class SetUpTearDown {
   private void generateApi(String spec) throws IOException, InterruptedException {
     writeToJsonFile(spec);
     forgeApi();
-    getApiClientTypes();
   }
 
   private void writeToJsonFile(String spec) throws IOException {
@@ -73,8 +72,6 @@ public class SetUpTearDown {
     Process process = runtime.exec(openApiForgeCommand);
     process.waitFor();
   }
-
-  private void getApiClientTypes() {}
 
   // Although theoretically we could switch @After for @Before here for debugging purposes, it can
   // cause failures.
