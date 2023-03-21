@@ -197,7 +197,7 @@ public class MethodCallHandler {
     for (int i = 0; i < filesInSrcMain.length; i++) {
       filePaths[i] = filesInSrcMain[i].getPath();
       // TODO: Use a logger for this (it's noisy but helpful for debugging):
-//      System.err.println("compiling " + filePaths[i]);
+      //      System.err.println("compiling " + filePaths[i]);
     }
     compiler.run(null, null, null, filePaths);
   }
