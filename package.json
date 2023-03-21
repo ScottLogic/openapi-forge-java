@@ -10,7 +10,7 @@
   "scripts": {
     "prepare": "husky install",
     "test": "npm run test:generators",
-    "test:generators": "cd features/ && sh ./mvnw test && cd ..",
+    "test:generators": "node startTests.js",
     "lint:check:all": "eslint .",
     "lint:write:all": "eslint --fix .",
     "format:check:all": "npm run format:check:java && npm run format:check:javascript",
