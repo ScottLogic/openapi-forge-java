@@ -31,7 +31,7 @@ public class StepDefinitions {
   public void calling_method_server_responds_with_headers(String method, String headers) {
     latestResponse =
         methodCallHandler.callMethod(
-            method, new ArrayList<>(), "null", deserialiseHeaders(headers), latestServerIndex);
+            method, new ArrayList<>(), null, deserialiseHeaders(headers), latestServerIndex);
   }
 
   @Then("the response should be of type {word}")
@@ -120,45 +120,42 @@ public class StepDefinitions {
   public void calling_the_method_with(String method, String rawParameters) {
     List<String> parameters = Arrays.stream(rawParameters.split(",")).toList();
     latestResponse =
-        methodCallHandler.callMethod(
-            method, parameters, "null", new HashMap<>(), latestServerIndex);
+        methodCallHandler.callMethod(method, parameters, null, new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} without params")
   public void calling_the_method_without(String method) {
     latestResponse =
         methodCallHandler.callMethod(
-            method, new ArrayList<>(), "null", new HashMap<>(), latestServerIndex);
+            method, new ArrayList<>(), null, new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the spied method {word} without params")
   public void calling_the_spied_method_without(String method) {
     latestResponse =
         methodCallHandler.callMethod(
-            method, new ArrayList<>(), "null", new HashMap<>(), latestServerIndex);
+            method, new ArrayList<>(), null, new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} with object {}")
   public void calling_the_method_with_object(String method, String objectAsString) {
     List<String> parameters = Collections.singletonList(objectAsString);
     latestResponse =
-        methodCallHandler.callMethod(
-            method, parameters, "null", new HashMap<>(), latestServerIndex);
+        methodCallHandler.callMethod(method, parameters, null, new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} with array {string}")
   public void calling_the_method_with_array(String method, String arrayAsString) {
     List<String> parameters = Collections.singletonList(arrayAsString);
     latestResponse =
-        methodCallHandler.callMethod(
-            method, parameters, "null", new HashMap<>(), latestServerIndex);
+        methodCallHandler.callMethod(method, parameters, null, new HashMap<>(), latestServerIndex);
   }
 
   @When("calling the method {word} and the server provides an empty response")
   public void calling_the_method_and_the_server_provides_an_empty_response(String method) {
     latestResponse =
         methodCallHandler.callMethod(
-            method, new ArrayList<>(), "null", new HashMap<>(), latestServerIndex);
+            method, new ArrayList<>(), null, new HashMap<>(), latestServerIndex);
   }
 
   @When("selecting the server at index {int}")

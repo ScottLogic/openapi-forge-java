@@ -15,6 +15,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import okhttp3.*;
@@ -27,19 +28,6 @@ public class MethodCallHandler {
 
   MethodCallHandler(TypeConverter typeConverter) {
     this.typeConverter = typeConverter;
-  }
-
-  protected MethodResponse callMethod(String methodName, List<String> parameters)
-      throws RuntimeException {
-    // Putting null without quotes here is incorrect! We're just trying to keep the JSON
-    // serialiser/deserialiser
-    // happy with our mocks.
-    return callMethod(methodName, parameters, "null", null, 0);
-  }
-
-  protected MethodResponse callMethod(String methodName, List<String> parameters, String response)
-      throws RuntimeException {
-    return callMethod(methodName, parameters, response, null, 0);
   }
 
   protected MethodResponse callMethod(
@@ -115,7 +103,8 @@ public class MethodCallHandler {
     Response mockResponse = mock(Response.class);
     ResponseBody mockResponseBody = mock(ResponseBody.class);
     when(mockResponse.body()).thenReturn(mockResponseBody);
-    when(mockResponseBody.string()).thenReturn(response);
+    // "null" is not the same as null here!
+    when(mockResponseBody.string()).thenReturn(Objects.requireNonNullElse(response, "null"));
     if (headers != null) {
       Headers mockHeaders = mock(Headers.class);
       for (String key : headers.keySet()) {
@@ -207,7 +196,8 @@ public class MethodCallHandler {
     String[] filePaths = new String[filesInSrcMain.length];
     for (int i = 0; i < filesInSrcMain.length; i++) {
       filePaths[i] = filesInSrcMain[i].getPath();
-      System.out.println("compiling " + filePaths[i]);
+      // TODO: Use a logger for this (it's noisy but helpful for debugging):
+//      System.err.println("compiling " + filePaths[i]);
     }
     compiler.run(null, null, null, filePaths);
   }
@@ -230,6 +220,7 @@ public class MethodCallHandler {
         .newInstance(mockHttp, configuration);
   }
 
+  @SuppressWarnings("unchecked")
   private void setBasePath(Class<?> configurationClass, Object configuration)
       throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
     Method getServers = configurationClass.getDeclaredMethod("getServers");
