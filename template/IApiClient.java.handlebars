@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.time.ZonedDateTime;
 
 
 // <summary>
@@ -35,7 +36,7 @@ import java.util.HashMap;
       {{#each _sortedParameters}}
       // <param name="{{name}}">{{description}}</param>
       {{/each}}
-    public HttpResponse<{{safeTypeConvert _response.schema}}> {{operationId}}(
+    public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
             {{~safeTypeConvert schema}} {{toParamName name ~}}
             {{~#unless @last}}, {{/unless ~}}

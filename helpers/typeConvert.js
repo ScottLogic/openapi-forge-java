@@ -12,13 +12,13 @@ const fromFormat = (propFormat, shouldBox) => {
       return shouldBox ? "Double" : "double";
     case "date":
     case "date-time":
-      return "Date";
+      return "ZonedDateTime";
     case "byte":
     case "binary":
     case "string":
       return "String";
     default:
-      return "void";
+      return shouldBox ? "Void" : "void";
   }
 };
 

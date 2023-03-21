@@ -9,7 +9,7 @@ const createHeaderParamsSnippet = (sortedParams) => {
   let cookieParams = getParametersByType(sortedParams, "cookie");
   if (cookieParams.length !== 0) {
     let safeParamName = toParamName(cookieParams[0].name);
-    headerSnippet += `.addHeader("cookie", "${cookieParams[0].name}={${safeParamName}}`;
+    headerSnippet += `.addHeader("cookie", "${cookieParams[0].name}="+${safeParamName}+"`;
     cookieParams = cookieParams.slice(1);
     for (const cookieParam of cookieParams) {
       safeParamName = toParamName(cookieParam.name);
