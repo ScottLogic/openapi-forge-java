@@ -97,7 +97,7 @@ public class MethodCallHandler {
               + parameters.toString().substring(1, parameters.toString().length() - 1)
               + ")"
               + "\r\n\t"
-              + e);
+              + e.getCause());
     }
   }
 
