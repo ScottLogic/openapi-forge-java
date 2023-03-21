@@ -18,7 +18,7 @@ const fromFormat = (propFormat, shouldBox) => {
     case "string":
       return "String";
     default:
-      return "void";
+      return shouldBox ? "Void" : "void";
   }
 };
 

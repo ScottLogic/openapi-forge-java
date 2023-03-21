@@ -75,7 +75,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
             .build();
         Call call = _client.newCall(request);
         Response response = call.execute();
-        {{safeTypeConvert _response.schema}} responseObject;
+        {{safeTypeConvert _response.schema true}} responseObject;
         {{#if _response.schema}}
         String responseBodyString = response.body().string();
         {{createReturnStatement _response.schema}}
@@ -83,7 +83,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         responseObject = null;
         response.close();
         {{/if}}
-        return new HttpResponse<{{safeTypeConvert _response.schema}}>(
+        return new HttpResponse<{{safeTypeConvert _response.schema true}}>(
               responseObject,
               response.code(),
               response.headers()
