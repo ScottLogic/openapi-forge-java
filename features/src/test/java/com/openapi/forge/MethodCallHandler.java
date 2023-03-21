@@ -128,11 +128,15 @@ public class MethodCallHandler {
     when(mockCall.execute()).thenReturn(mockResponse);
   }
 
+  @SuppressWarnings("unchecked")
   public String getPropertyOnObject(
       String propName,
       Object resultOfMethodCall,
       String latestResponseType,
       ClassLoader classLoader) {
+    if (latestResponseType.contains("Map")) {
+      return ((Map<Object, Object>) resultOfMethodCall).get(propName).toString();
+    }
     try {
       Class<?> propClass =
           Class.forName(packageName + "." + latestResponseType, false, classLoader);
