@@ -90,12 +90,13 @@ public class MethodCallHandler {
               + e);
     } catch (InvocationTargetException e) {
       throw new RuntimeException(
-          "There is a problem with calling this method.\r\n\t"
-              + "Check that the generated method "
+          "Check that the generated method "
               + methodName
               + " can cope with these parameters: "
-              + parameters
-              + ". \r\n\t"
+              + "("
+              + parameters.toString().substring(1, parameters.toString().length() - 1)
+              + ")"
+              + "\r\n\t"
               + e);
     }
   }
