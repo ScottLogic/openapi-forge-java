@@ -18,7 +18,7 @@ if (fs.existsSync("../openapi-forge/features/")) {
   shell.cd("features/");
 
   // Pass over control to maven test
-  shell.exec("sh ./mvnw test");
+  shell.exec("cross-env ./mvnw test");
 
   // Return to original location
   shell.cd("..");
