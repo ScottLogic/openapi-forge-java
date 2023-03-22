@@ -9,8 +9,9 @@ const fs = require("fs");
 // | openapi-forge-java
 // | - features/
 if (fs.existsSync("../openapi-forge/features/")) {
-  shell.exec(
-    "cp ../openapi-forge/features/*.feature features/src/test/resources/com/openapi/forge"
+  shell.cp(
+    "../openapi-forge/features/*.feature",
+    "features/src/test/resources/com/openapi/forge"
   );
 
   // Go into the test folder
@@ -23,7 +24,7 @@ if (fs.existsSync("../openapi-forge/features/")) {
   shell.cd("..");
 
   // Clean the resources folder
-  shell.exec("rm features/src/test/resources/com/openapi/forge/*.feature");
+  shell.rm("features/src/test/resources/com/openapi/forge/*.feature");
 } else {
   shell.echo(
     "Expecting .feature files to be found at ../openapi-forge/features/ (relative from here)."
