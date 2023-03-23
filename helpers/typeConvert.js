@@ -11,6 +11,7 @@ const fromFormat = (propFormat, shouldBox) => {
     case "double":
       return shouldBox ? "Double" : "double";
     case "date":
+      return "LocalDate";
     case "date-time":
       return "ZonedDateTime";
     case "byte":
