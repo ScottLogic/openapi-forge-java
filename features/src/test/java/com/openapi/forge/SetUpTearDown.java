@@ -41,16 +41,8 @@ public class SetUpTearDown {
 
   private void forgeApi() {
     Runtime runtime = Runtime.getRuntime();
-    // We need npx because runtime.exec does not respect the PATHEXT variable on Windows:
-    // https://stackoverflow.com/questions/40503074/how-to-run-npm-command-in-java-using-process-builder
-    String npxCommand;
-    if (isWindows()) {
-      npxCommand = "npx.cmd";
-    } else {
-      npxCommand = "npx";
-    }
     String[] openApiForgeCommand = new String[] {
-      npxCommand,
+      getNpxCommand(),
       "openapi-forge",
       "forge",
       tempSchemaPath,
@@ -104,6 +96,21 @@ public class SetUpTearDown {
     if (!fileOrDirectory.delete()) {
       System.err.println("Failed to delete: " + pathRelativeToPom);
     }
+  }
+
+  private String getNpxCommand() {
+    // We can't run openapi-forge on Windows because runtime.exec does not respect the PATHEXT
+    // variable on Windows:
+    // https://stackoverflow.com/questions/40503074/how-to-run-npm-command-in-java-using-process-builder
+    // NPX is used to avoid this problem and so that the openapi-forge package does not need to be installed:
+    // https://www.npmjs.com/package/npx
+    String npxCommand;
+    if (isWindows()) {
+      npxCommand = "npx.cmd";
+    } else {
+      npxCommand = "npx";
+    }
+    return npxCommand;
   }
 
   private boolean isWindows() {
