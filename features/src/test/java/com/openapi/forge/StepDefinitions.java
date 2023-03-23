@@ -112,7 +112,10 @@ public class StepDefinitions {
       throws MalformedURLException, ClassNotFoundException, NoSuchFieldException {
     assertTrue(methodCallHandler.doesClassExist(modelObjectName));
     assertTrue(methodCallHandler.classHasProperty(modelObjectName, property));
-    String actualType = methodCallHandler.getTypeOfClassProperty(modelObjectName, property);
+    Class<?> actualType = methodCallHandler.getTypeOfClassProperty(
+      modelObjectName,
+      property
+    );
     assertEquals(expectedType, javaTypeToGenericType.convert(actualType));
   }
 
