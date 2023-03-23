@@ -107,7 +107,7 @@ public class StepDefinitions {
     should_have_a_property_named(modelObjectName, property, expectedType);
   }
 
-  public void should_have_a_property_named(
+  private void should_have_a_property_named(
       String modelObjectName, String property, String expectedType)
       throws MalformedURLException, ClassNotFoundException, NoSuchFieldException {
     assertTrue(methodCallHandler.doesClassExist(modelObjectName));
