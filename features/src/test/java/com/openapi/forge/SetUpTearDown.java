@@ -14,24 +14,21 @@ import java.util.List;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 public class SetUpTearDown {
+
   private final String tempSchemaPath = "schema.json";
 
-  boolean isWindows() {
-    return System.getProperty("os.name").toLowerCase().contains("win");
-  }
-
   @Given("an API with the following specification")
-  public void an_api_with_spec(String spec) throws IOException, InterruptedException {
+  public void an_api_with_spec(String spec) throws IOException {
     generateApi(spec);
   }
 
   @When("generating an API from the following specification")
   public void generating_an_api_from_the_following_specification(String spec)
-      throws IOException, InterruptedException {
+    throws IOException {
     generateApi(spec);
   }
 
-  private void generateApi(String spec) throws IOException, InterruptedException {
+  private void generateApi(String spec) throws IOException {
     writeToJsonFile(spec);
     forgeApi();
   }
@@ -42,44 +39,42 @@ public class SetUpTearDown {
     Files.write(file, lines, StandardCharsets.UTF_8);
   }
 
-  private void forgeApi() throws IOException, InterruptedException {
+  private void forgeApi() {
     Runtime runtime = Runtime.getRuntime();
-    String npxCommand;
-    if (isWindows()) {
-      npxCommand = "npx.cmd";
-    } else {
-      npxCommand = "npx";
+    String[] openApiForgeCommand = new String[] {
+      getNpxCommand(),
+      "openapi-forge",
+      "forge",
+      tempSchemaPath,
+      "..",
+      "--output",
+      ".",
+      "--exclude",
+      "pom.xml",
+      ".mvn/**",
+      ".gitignore",
+      "mvnw*",
+      "*.md",
+    };
+    try {
+      Process process = runtime.exec(openApiForgeCommand);
+      process.waitFor();
+    } catch (IOException e) {
+      tearDownGeneratedFiles();
+      throw new RuntimeException(
+        "Command failed:\t\r\n" +
+        String.join(" ", openApiForgeCommand) +
+        "\t\r\n" +
+        e.getCause()
+      );
+    } catch (InterruptedException e) {
+      tearDownGeneratedFiles();
+      throw new RuntimeException(e);
     }
-    String[] openApiForgeCommand =
-        new String[] {
-          npxCommand, // TODO: Add as peer dependency npm?
-          "openapi-forge",
-          //          "node", // Only needed when running openapi-forge from relative path
-          //          "../../openapi-forge/src/index.js",
-          "forge",
-          tempSchemaPath,
-          "..",
-          "--output",
-          ".",
-          "--exclude",
-          "pom.xml",
-          ".mvn/**",
-          ".gitignore",
-          "mvnw*",
-          "*.md"
-        };
-    // TODO: Can we get the names of all files generated to be returned with the exit code?
-    Process process = runtime.exec(openApiForgeCommand);
-    process.waitFor();
   }
 
-  // Although theoretically we could switch @After for @Before here for debugging purposes, it can
-  // cause failures.
-  // There seems to be a difference between files on the classpath at compile time and files
-  // dynamically added to
-  // the classpath. If there are any files in the main package at the test of `mvn test`, these will
-  // not be purged fully by this teardown. There may be a fix for this, but it doesn't seem worth it
-  // unless further problems show down the line...
+  // To isolate tests from each other we clean generated files after every test.
+  // In particular, we want to protect against issues with compilation.
   @After
   public void tearDownGeneratedFiles() {
     deleteDirectory("src/main/java/");
@@ -101,5 +96,24 @@ public class SetUpTearDown {
     if (!fileOrDirectory.delete()) {
       System.err.println("Failed to delete: " + pathRelativeToPom);
     }
+  }
+
+  private String getNpxCommand() {
+    // We can't run openapi-forge on Windows because runtime.exec does not respect the PATHEXT
+    // variable on Windows:
+    // https://stackoverflow.com/questions/40503074/how-to-run-npm-command-in-java-using-process-builder
+    // NPX is used to avoid this problem and so that the openapi-forge package does not need to be installed:
+    // https://www.npmjs.com/package/npx
+    String npxCommand;
+    if (isWindows()) {
+      npxCommand = "npx.cmd";
+    } else {
+      npxCommand = "npx";
+    }
+    return npxCommand;
+  }
+
+  private boolean isWindows() {
+    return System.getProperty("os.name").toLowerCase().contains("win");
   }
 }
