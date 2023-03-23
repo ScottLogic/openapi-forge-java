@@ -165,7 +165,22 @@ public class StepDefinitions {
 
   @Then("the requested URL should be {word}")
   public void the_requested_url_should_be(String expectedUrl) {
-    assertEquals(expectedUrl, latestResponse.getUrlRequested());
+    if (!expectedUrl.contains("?")) {
+      // There are no query parameters
+      assertEquals(expectedUrl, latestResponse.getUrlRequested());
+    } else {
+      // Accept query parameters in different orders
+      String[] expectedUrlParts = expectedUrl.split("\\?");
+      String[] actualUrlParts = latestResponse.getUrlRequested().split("\\?");
+      assertEquals(2, actualUrlParts.length);
+      assertEquals(expectedUrlParts[0], actualUrlParts[0]);
+
+      String[] expectedQueryParams = expectedUrlParts[1].split("&");
+      String[] actualQueryParams = actualUrlParts[1].split("&");
+      Arrays.sort(expectedQueryParams);
+      Arrays.sort(actualQueryParams);
+      assertArrayEquals(expectedQueryParams, actualQueryParams);
+    }
   }
 
   @Then("the request method should be of type {word}")
