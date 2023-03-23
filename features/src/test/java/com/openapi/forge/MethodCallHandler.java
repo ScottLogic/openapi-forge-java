@@ -23,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.util.StringUtils;
 
 public class MethodCallHandler {
+
   private final String packageName = this.getClass().getPackageName();
   private final TypeConverter typeConverter;
 
@@ -117,14 +118,14 @@ public class MethodCallHandler {
     when(mockCall.execute()).thenReturn(mockResponse);
   }
 
-  @SuppressWarnings("unchecked")
   public String getPropertyOnObject(
-      String propName,
-      Object resultOfMethodCall,
-      String latestResponseType,
-      ClassLoader classLoader) {
-    if (latestResponseType.contains("Map")) {
-      return ((Map<Object, Object>) resultOfMethodCall).get(propName).toString();
+    String propName,
+    Object resultOfMethodCall,
+    String latestResponseType,
+    ClassLoader classLoader
+  ) {
+    if (resultOfMethodCall instanceof Map) {
+      return ((Map<?, ?>) resultOfMethodCall).get(propName).toString();
     }
     try {
       Class<?> propClass =
@@ -220,7 +221,7 @@ public class MethodCallHandler {
         .newInstance(mockHttp, configuration);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked") // cast to List<String> for servers
   private void setBasePath(Class<?> configurationClass, Object configuration)
       throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
     Method getServers = configurationClass.getDeclaredMethod("getServers");
