@@ -5,10 +5,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 
 public class TypeConverter {
+
   // Cannot store primitives in an array of Objects. This requires generated code to only use boxed
   // values.
-  Object[] convertBoxedTypes(String[] valuesWithoutOptionalParameters, Class<?>[] targetTypes) {
-    String[] values = fillOutWithNull(valuesWithoutOptionalParameters, targetTypes.length);
+  Object[] convertBoxedTypes(
+    String[] valuesWithoutOptionalParameters,
+    Class<?>[] targetTypes
+  ) {
+    String[] values = fillOutWithNull(
+      valuesWithoutOptionalParameters,
+      targetTypes.length
+    );
     Object[] convertedValues = new Object[values.length];
     for (int i = 0; i < values.length; i++) {
       convertedValues[i] = convertValue(values[i], targetTypes[i]);
@@ -44,22 +51,26 @@ public class TypeConverter {
       return Arrays.asList(strings);
     } else {
       throw new UnsupportedOperationException(
-          "Trying to convert value " + value + " from String to " + type);
+        "Trying to convert value " + value + " from String to " + type
+      );
     }
   }
 
-  private String[] fillOutWithNull(String[] valuesWithoutOptionalParameters, int length) {
+  private String[] fillOutWithNull(
+    String[] valuesWithoutOptionalParameters,
+    int targetLength
+  ) {
     // By default, parameters are optional. We can fill out the parameters with null to support
     // that.
     // https://swagger.io/specification/#parameter-object
-    String[] values = new String[length];
-    for (int i = 0; i < length; i++) {
-      if (i < valuesWithoutOptionalParameters.length) {
-        values[i] = valuesWithoutOptionalParameters[i];
-      } else {
-        values[i] = null;
-      }
-    }
+    String[] values = new String[targetLength];
+    System.arraycopy(
+      valuesWithoutOptionalParameters,
+      0,
+      values,
+      0,
+      valuesWithoutOptionalParameters.length
+    );
     return values;
   }
 }
