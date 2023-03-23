@@ -3,6 +3,7 @@ package com.openapi.forge;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
+import java.util.List;
 
 public class TypeConverter {
   // Cannot store primitives in an array of Objects. This requires generated code to only use boxed
@@ -29,7 +30,7 @@ public class TypeConverter {
       return Float.valueOf(value);
     } else if (type == String.class) {
       return value;
-    } else if (type.toString().contains(this.getClass().getPackageName())) {
+    } else if (type.getPackageName().equals(this.getClass().getPackageName())) {
       // This is a custom type, defined in the schema.
       // We need to deserialise the String to the Object of the correct class.
       ObjectMapper deserMapper = new ObjectMapper();
@@ -38,7 +39,7 @@ public class TypeConverter {
       } catch (JsonProcessingException e) {
         throw new RuntimeException(e);
       }
-    } else if (type.toString().contains("java.util.List")) {
+    } else if (type == List.class) {
       // Assuming a list of strings.
       String[] strings = value.split(",");
       return Arrays.asList(strings);
