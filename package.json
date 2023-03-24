@@ -9,8 +9,8 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "ls",
-    "test:generators": "node testGenerators",
+    "test": "npm run test:generators",
+    "test:generators": "node startTests.js",
     "lint:check:all": "eslint .",
     "lint:write:all": "eslint --fix .",
     "format:check:all": "npm run format:check:java && npm run format:check:javascript",
