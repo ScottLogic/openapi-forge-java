@@ -161,12 +161,16 @@ public class MethodCallHandler {
     return clazz.getField(propertyName).getName().equals(propertyName);
   }
 
-  public String getTypeOfClassProperty(String className, String propertyName)
-      throws NoSuchFieldException, ClassNotFoundException, MalformedURLException {
+  public Class<?> getTypeOfClassProperty(String className, String propertyName)
+    throws NoSuchFieldException, ClassNotFoundException, MalformedURLException {
     compileFilesInPackage();
     ClassLoader classLoader = createClassLoaderForPackage();
-    Class<?> clazz = Class.forName(packageName + "." + className, false, classLoader);
-    return clazz.getField(propertyName).getGenericType().getTypeName();
+    Class<?> clazz = Class.forName(
+      packageName + "." + className,
+      false,
+      classLoader
+    );
+    return clazz.getField(propertyName).getType();
   }
 
   public boolean classHasMethod(String className, String methodName) {

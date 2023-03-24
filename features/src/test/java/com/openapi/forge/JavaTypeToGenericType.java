@@ -1,22 +1,26 @@
 package com.openapi.forge;
 
 public class JavaTypeToGenericType {
-  public String convert(String javaType) {
-    // Want to convert values like java.lang.Integer
-    String typeLowerCase = javaType.toLowerCase();
-    if (typeLowerCase.contains("int")
-        || typeLowerCase.contains("long")
-        || typeLowerCase.contains("double")
-        || typeLowerCase.contains("float")) {
+
+  public String convert(Class<?> javaType) {
+    if (
+      javaType.equals(Integer.class) ||
+      javaType.equals(int.class) ||
+      javaType.equals(Long.class) ||
+      javaType.equals(long.class) ||
+      javaType.equals(Double.class) ||
+      javaType.equals(double.class) ||
+      javaType.equals(Float.class) ||
+      javaType.equals(float.class)
+    ) {
       return "number";
     }
-    if (typeLowerCase.contains("string")) {
+    if (javaType.equals(String.class)) {
       return "string";
     }
-    String packageName = this.getClass().getPackageName().toLowerCase();
-    if (typeLowerCase.contains(packageName)) {
+    if (javaType.getPackageName().equals(this.getClass().getPackageName())) {
       // If we are using a custom type, strip out the package name
-      String[] parts = javaType.split("\\.");
+      String[] parts = javaType.getTypeName().split("\\.");
       return parts[parts.length - 1];
     }
     throw new UnsupportedOperationException("Converting " + javaType);
