@@ -39,7 +39,7 @@ The standard test script is used to execute the BDD-style tests against this gen
 npm run test
 ```
 
-The script expects that the openapi-forge project (which is where the BDD feature files are located) is checked out at the same folder-level as this project. You also need to have the .NET CLI installed globally, you can confirm this by running `dotnet` in your terminal window.
+The script expects that the openapi-forge project (which is where the BDD feature files are located) is checked out at the same folder-level as this project. In-depth documentation can be found at [features/README.md](features/README.md).
 
 ### Linting
 
