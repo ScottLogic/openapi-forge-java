@@ -43,7 +43,8 @@ public class SetUpTearDown {
     Runtime runtime = Runtime.getRuntime();
     String[] openApiForgeCommand = new String[] {
       getNpxCommand(),
-      "openapi-forge",
+      "--yes", // Accept npx install prompt if present
+      "openapi-forge@latest",
       "forge",
       tempSchemaPath,
       "..",
@@ -102,7 +103,8 @@ public class SetUpTearDown {
     // We can't run openapi-forge on Windows because runtime.exec does not respect the PATHEXT
     // variable on Windows:
     // https://stackoverflow.com/questions/40503074/how-to-run-npm-command-in-java-using-process-builder
-    // NPX is used to avoid this problem and so that the openapi-forge package does not need to be installed:
+    // NPX is used to avoid this problem and so that the openapi-forge package does not need to be
+    // installed prior to running the tests:
     // https://www.npmjs.com/package/npx
     String npxCommand;
     if (isWindows()) {
