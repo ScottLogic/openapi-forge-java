@@ -12,6 +12,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +134,13 @@ public class MethodCallHandler {
           Class.forName(packageName + "." + latestResponseType, false, classLoader);
       Method getProp = propClass.getDeclaredMethod("get" + StringUtils.capitalize(propName));
       getProp.setAccessible(true); // Otherwise causes IllegalAccessException.
-      return getProp.invoke(resultOfMethodCall).toString();
+      Object resultObject = getProp.invoke(resultOfMethodCall);
+      // Default ZonedDateTime formatting doesn't match with ISO format.
+      if (resultObject instanceof ZonedDateTime) {
+        return DateTimeFormatter.ISO_INSTANT.format((ZonedDateTime) resultObject);
+      } else {
+        return resultObject.toString();
+      }
     } catch (ClassNotFoundException e) {
       throw new RuntimeException("This is probably an issue with the test code:\t\r\n" + e);
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
