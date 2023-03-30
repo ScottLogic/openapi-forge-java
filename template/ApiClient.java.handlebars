@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.ZonedDateTime;
+import java.time.LocalDate;
 
 import okhttp3.*;
 import com.fasterxml.jackson.databind.*;
@@ -61,6 +62,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         var requestUri = _baseAddress.concat("{{setPathParameters @root.path _sortedParameters}}"){{#if (queryParametersExist _sortedParameters)}}.concat(queryString.toString()){{/if}};
         {{#if (bodyParameterExists _sortedParameters)}}
         ObjectMapper serMapper = new ObjectMapper(); 
+        serMapper.findAndRegisterModules();
         String jsonBody = serMapper.writeValueAsString(body);
         RequestBody httpBody = RequestBody.create(jsonBody, MediaType.parse("application/json; charset=utf-8"));
         {{/if}}

@@ -27,7 +27,8 @@ const createReturnStatement = (responseSchema) => {
       returnStatement = "responseBodyString";
       break;
     default:
-      mapperStatements = `ObjectMapper deserMapper = new ObjectMapper();\n`;
+      mapperStatements = `ObjectMapper deserMapper = new ObjectMapper();deserMapper.findAndRegisterModules();\n`;
+
       mapperStatements += `${responseType} ${toParamName(
         responseType
       )} = deserMapper.readValue(responseBodyString, ${mapperListHandle(
