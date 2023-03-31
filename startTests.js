@@ -18,13 +18,16 @@ if (fs.existsSync("../openapi-forge/features/")) {
   shell.cd("features/");
 
   // Pass over control to maven test
-  shell.exec(process.platform === "win32" ? ".\\mvnw.cmd test" : "./mvnw test");
-
+  const testProc = shell.exec(process.platform === "win32" ? ".\\mvnw.cmd test" : "./mvnw test");
+  // Capture return code
+  const returnCode = testProc.code;
   // Return to original location
   shell.cd("..");
 
   // Clean the resources folder
   shell.rm("features/src/test/resources/com/openapi/forge/*.feature");
+  // Return return code
+  shell.exit(returnCode);
 } else {
   shell.echo(
     "Expecting .feature files to be found at ../openapi-forge/features/ (relative from here)."
@@ -32,4 +35,5 @@ if (fs.existsSync("../openapi-forge/features/")) {
   shell.echo(
     "Have you installed the openapi forge project in the correct location?"
   );
+  shell.exit(1);
 }
