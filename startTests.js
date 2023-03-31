@@ -18,7 +18,9 @@ if (fs.existsSync("../openapi-forge/features/")) {
   shell.cd("features/");
 
   // Pass over control to maven test
-  const testProc = shell.exec(process.platform === "win32" ? ".\\mvnw.cmd test" : "./mvnw test");
+  const testProc = shell.exec(
+    process.platform === "win32" ? ".\\mvnw.cmd test" : "./mvnw test"
+  );
   // Capture return code
   const returnCode = testProc.code;
   // Return to original location
