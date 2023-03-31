@@ -1,6 +1,6 @@
 ## OpenAPI Forge - Java
 
-This repository is the C# generator for the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge), see that repository for usage instructions:
+This repository is the Java generator for the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge), see that repository for usage instructions:
 
 https://github.com/ScottLogic/openapi-forge
 

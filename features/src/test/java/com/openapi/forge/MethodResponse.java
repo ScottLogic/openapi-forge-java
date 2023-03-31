@@ -7,13 +7,18 @@ import okhttp3.Request;
 import okio.Buffer;
 
 public class MethodResponse {
+
   private final Object responseData;
   private final Headers responseHeaders;
   private final Request request;
   private final ClassLoader classLoader;
 
   MethodResponse(
-      Request request, Object responseData, Headers responseHeaders, ClassLoader classLoader) {
+    Request request,
+    Object responseData,
+    Headers responseHeaders,
+    ClassLoader classLoader
+  ) {
     this.responseData = responseData;
     this.responseHeaders = responseHeaders;
     this.request = request;
