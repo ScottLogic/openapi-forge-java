@@ -2,40 +2,44 @@ name: Test
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   test-generator:
     name: Test
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3 
-
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      
-        # Must change shell as you are using the windows-latest image 
-      - name: Set npm shell
-        run: npm config set script-shell "C:\\Program Files\\Git\\bin\\bash.exe"
-      
-      - name: Install Node.js dependencies globally
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Check out Git repository
+        uses: actions/checkout@v3 
+        with: 
+          path: openapi-forge-java
+       
+      - name: Install Node.js dependencies
         run: |
+          cd openapi-forge-java
           npm install
 
-      - name: Install Forge
-        run: |
-          cd ..
-          git clone https://github.com/ScottLogic/openapi-forge.git
-          cd openapi-forge
-          npm install
-          npm install -g
+      - name: Check out the openapi-forge generator
+        uses: actions/checkout@v3
+        with: 
+          repository: ScottLogic/openapi-forge
+          path: openapi-forge
 
-      - name: test-generator
-        run: npm run test
-        continue-on-error: true
+      - name: Run the tests
+        run: |
+          cd openapi-forge-java
+          npm test
