@@ -47,7 +47,11 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     {{/each}}
     public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
-            {{~safeTypeConvert schema}} {{toParamName name ~}}
+            {{#ifEquals _response.required true}}
+                {{~safeTypeConvert schema false}} {{toParamName name ~}}
+            {{else}}
+                {{~safeTypeConvert schema true}} {{toParamName name ~}}
+            {{/ifEquals}}
             {{~#unless @last}}, {{/unless ~}}
         {{~/each ~}}
     ) throws IOException{{#if (bodyParameterExists _sortedParameters)}}, JsonProcessingException{{/if}}{{#if (complexReturnType _response.schema)}}, JsonMappingException{{/if}}
