@@ -9,6 +9,10 @@ const isStringType = (typeDef) =>
   typeDef.type === "string" &&
   (typeDef.format === undefined || typeDef.format === "string");
 
+const isDoubleType = (typeDef) =>
+  typeDef.type === "number" &&
+  (typeDef.format === undefined || typeDef.format === "double");
+
 const isStringArrayParam = (param) =>
   param.schema.type === "array" &&
   param.schema.items &&
@@ -58,9 +62,17 @@ ${indent}`;
 
 const serialisePrimitive = (param) => {
   const safeParamName = toParamName(param.name);
-  const escaped = isStringType(param.schema)
-    ? `java.net.URLEncoder.encode(${safeParamName}, StandardCharsets.UTF_8)`
-    : "String.valueOf(" + safeParamName + ")";
+  let escaped;
+  if (isStringType(param.schema)) {
+    escaped = `java.net.URLEncoder.encode(${safeParamName}, StandardCharsets.UTF_8)`;
+  } else if (isDoubleType(param.schema)) {
+    escaped =
+      'String.valueOf((new DecimalFormat("0.###############")).format(' +
+      safeParamName +
+      "))";
+  } else {
+    escaped = `String.valueOf(${safeParamName})`;
+  }
 
   const serialisedParam = prefixSerialisedQueryParam(
     `"${param.name}=".concat(${escaped})`,
