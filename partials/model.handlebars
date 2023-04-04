@@ -17,11 +17,17 @@
         // {{example}}
         // <example>
         {{/if}}
-        public {{{safeTypeConvert this}}} {{@key}};
-        
-        public {{{safeTypeConvert this}}} get{{toParamNameCapital @key}}() { return {{@key}}; }
+        {{#ifContains ../required @key}}
+        {{setVar "shouldBox" false}}
+        {{else}}
+        {{setVar "shouldBox" true}}
+        {{/ifContains}}
 
-        public void set{{toParamNameCapital @key}}({{{safeTypeConvert this}}} new{{toParamNameCapital @key}}) { {{@key}} = new{{toParamNameCapital @key}}; }
+        public {{{safeTypeConvert this @root.shouldBox}}} {{@key}};
+        
+        public {{{safeTypeConvert this @root.shouldBox}}} get{{toParamNameCapital @key}}() { return {{@key}}; }
+
+        public void set{{toParamNameCapital @key}}({{{safeTypeConvert this @root.shouldBox}}} new{{toParamNameCapital @key}}) { {{@key}} = new{{toParamNameCapital @key}}; }
       {{/each}}
     }
     

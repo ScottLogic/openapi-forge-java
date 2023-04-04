@@ -36,11 +36,13 @@ const serialiseObjectParam = (param) => {
     let optional_amp = serialisedObject.length == 0 ? "" : `"&"+`;
     // open first parantheses for the conditional to make it easy to read
     // open second parantheses for making sure to combine the string in a conditional block
-    let serialisedParam =
-      `(` +
-      `${safeParamName}.${propName} == null ? "" : (` +
-      optional_amp +
-      `"${propName}="`;
+    let nullCheck;
+    if (param.required) {
+      nullCheck = "(";
+    } else {
+      nullCheck = `${safeParamName}.${propName} == null ? "" : (`;
+    }
+    let serialisedParam = `(` + nullCheck + optional_amp + `"${propName}="`;
     let suffix = isStringType(objProp)
       ? `+ java.net.URLEncoder.encode(${safeParamName}.${propName}, StandardCharsets.UTF_8)`
       : `+ ${safeParamName}.${propName}`;
