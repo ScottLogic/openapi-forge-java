@@ -342,4 +342,20 @@ public class MethodCallHandler {
     }
     return objectToExtractFrom;
   }
+
+  public boolean propertyIsAPrimitive(String modelObjectName, String property) {
+    try {
+      Class<?> clazz = getTypeOfClassProperty(modelObjectName, property);
+      return (
+        clazz.equals(int.class) ||
+        clazz.equals(float.class) ||
+        clazz.equals(double.class) ||
+        clazz.equals(long.class)
+      );
+    } catch (
+      NoSuchFieldException | ClassNotFoundException | MalformedURLException e
+    ) {
+      throw new RuntimeException(e);
+    }
+  }
 }

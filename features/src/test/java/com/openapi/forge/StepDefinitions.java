@@ -122,8 +122,10 @@ public class StepDefinitions {
     String property,
     String expectedType
   ) throws MalformedURLException, NoSuchFieldException, ClassNotFoundException {
-    // We currently do not have a way to distinguish between optional and required properties
     should_have_a_property_named(modelObjectName, property, expectedType);
+    assertFalse(
+      methodCallHandler.propertyIsAPrimitive(modelObjectName, property)
+    );
   }
 
   @And("{word} should have a required property named {word} of type {word}")
@@ -132,8 +134,14 @@ public class StepDefinitions {
     String property,
     String expectedType
   ) throws MalformedURLException, NoSuchFieldException, ClassNotFoundException {
-    // We currently do not have a way to distinguish between optional and required properties
     should_have_a_property_named(modelObjectName, property, expectedType);
+    assertTrue(
+      methodCallHandler.propertyIsAPrimitive(modelObjectName, property) ||
+      // There is no primitive equivalent of a String, so we add an extra check:
+      methodCallHandler
+        .getTypeOfClassProperty(modelObjectName, property)
+        .equals(String.class)
+    );
   }
 
   private void should_have_a_property_named(
