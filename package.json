@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ms14981/openapi-forge-java-initial.git"
+    "url": "git+https://github.com/ScottLogic/openapi-forge-java.git"
   },
   "keywords": [
     "openapi-forge",
@@ -31,9 +31,9 @@
   "author": "murcikan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ms14981/openapi-forge-java-initial/issues"
+    "url": "https://github.com/ScottLogic/openapi-forge-java.git/issues"
   },
-  "homepage": "https://github.com/ms14981/openapi-forge-java-initial#readme",
+  "homepage": "https://github.com/ScottLogic/openapi-forge-java.git#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
