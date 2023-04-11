@@ -13,6 +13,8 @@ import okhttp3.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.lang.NonNull;
+
 
 
 
@@ -49,9 +51,9 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
             {{#ifEquals _response.required true}}
-                {{~safeTypeConvert schema false}} {{toParamName name ~}}
+                {{~safeTypeConvert schema false true}} {{toParamName name ~}}
             {{else}}
-                {{~safeTypeConvert schema true}} {{toParamName name ~}}
+                {{~safeTypeConvert schema true true}} {{toParamName name ~}}
             {{/ifEquals}}
             {{~#unless @last}}, {{/unless ~}}
         {{~/each ~}}
@@ -82,7 +84,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
             .build();
         Call call = _client.newCall(request);
         Response response = call.execute();
-        {{safeTypeConvert _response.schema true}} responseObject;
+        {{safeTypeConvert _response.schema true true}} responseObject;
         {{#if _response.schema}}
         String responseBodyString = response.body().string();
         {{createReturnStatement _response.schema}}

@@ -19,8 +19,7 @@ public class StepDefinitions {
   private MethodCallHandler methodCallHandler = new MethodCallHandler(
     new TypeConverter()
   );
-  private final JavaTypeToGenericType javaTypeToGenericType =
-    new JavaTypeToGenericType();
+  private final JavaTypeToGenericType javaTypeToGenericType = new JavaTypeToGenericType();
   private Object relevantPartOfResponse;
 
   @When("calling the method {word} and the server responds with")

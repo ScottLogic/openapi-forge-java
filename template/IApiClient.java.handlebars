@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.time.ZonedDateTime;
 import java.time.LocalDate;
+import org.springframework.lang.NonNull;
+
 
 // <summary>
 // {{_info.title}}
@@ -39,9 +41,9 @@ import java.time.LocalDate;
     public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
             {{#ifEquals _response.required true}}
-                {{~safeTypeConvert schema false}} {{toParamName name ~}}
+                {{~safeTypeConvert schema false true}} {{toParamName name ~}}
             {{else}}
-                {{~safeTypeConvert schema true}} {{toParamName name ~}}
+                {{~safeTypeConvert schema true true}} {{toParamName name ~}}
             {{/ifEquals}}
             {{~#unless @last}}, {{/unless ~}}
         {{~/each ~}}
