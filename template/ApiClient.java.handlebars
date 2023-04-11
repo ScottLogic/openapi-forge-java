@@ -48,7 +48,7 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     {{/each}}
     public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
-            {{#ifEquals _response.required true}}
+            {{#ifEquals required true}}
                 {{~safeTypeConvert schema false}} {{toParamName name ~}}
             {{else}}
                 {{~safeTypeConvert schema true}} {{toParamName name ~}}
