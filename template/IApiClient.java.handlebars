@@ -40,7 +40,7 @@ import org.springframework.lang.NonNull;
       {{/each}}
     public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
-            {{#ifEquals _response.required true}}
+            {{#ifEquals required true}}
                 {{~safeTypeConvert schema false true}} {{toParamName name ~}}
             {{else}}
                 {{~safeTypeConvert schema true true}} {{toParamName name ~}}
