@@ -1,7 +1,7 @@
 const toSafeName = require("./toClassName");
 
 const fromFormat = (propFormat, shouldBox, inFnSignature) => {
-  let required_object_prefix = !shouldBox && inFnSignature ? "@NonNull " : "";
+  const required_object_prefix = !shouldBox && inFnSignature ? "@NonNull " : "";
   switch (propFormat) {
     case "int32":
       return shouldBox ? "Integer" : "int";
@@ -31,7 +31,7 @@ const fromType = (
   shouldBox,
   inFnSignature
 ) => {
-  let required_object_prefix = !shouldBox && inFnSignature ? "@NonNull " : "";
+  const required_object_prefix = !shouldBox && inFnSignature ? "@NonNull " : "";
   switch (propType) {
     case "integer":
       return shouldBox ? "Integer" : "int";
