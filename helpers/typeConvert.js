@@ -1,7 +1,7 @@
 const toSafeName = require("./toClassName");
 
-const fromFormat = (propFormat, shouldBox, inDeclaration) => {
-  let required_object_prefix = !shouldBox && inDeclaration ? "@NonNull " : "";
+const fromFormat = (propFormat, shouldBox, inFnSignature) => {
+  let required_object_prefix = !shouldBox && inFnSignature ? "@NonNull " : "";
   switch (propFormat) {
     case "int32":
       return shouldBox ? "Integer" : "int";
@@ -29,9 +29,9 @@ const fromType = (
   additionalProperties,
   items,
   shouldBox,
-  inDeclaration
+  inFnSignature
 ) => {
-  let required_object_prefix = !shouldBox && inDeclaration ? "@NonNull " : "";
+  let required_object_prefix = !shouldBox && inFnSignature ? "@NonNull " : "";
   switch (propType) {
     case "integer":
       return shouldBox ? "Integer" : "int";
@@ -55,25 +55,25 @@ const fromType = (
   }
 };
 
-const typeConvert = (prop, shouldBox = false, inDeclaration = false) => {
+const typeConvert = (prop, shouldBox = false, inFnSignature = false) => {
   if (prop === null) return shouldBox ? "Void" : "void";
 
   if (prop === undefined) return "Object";
 
   // resolve references
   if (prop.$ref) {
-    let required_object_prefix = !shouldBox && inDeclaration ? "@NonNull " : "";
+    let required_object_prefix = !shouldBox && inFnSignature ? "@NonNull " : "";
     return required_object_prefix + toSafeName(prop.$ref.split("/").pop());
   }
 
   const type = prop.format
-    ? fromFormat(prop.format, shouldBox, inDeclaration)
+    ? fromFormat(prop.format, shouldBox, inFnSignature)
     : fromType(
         prop.type,
         prop.additionalProperties,
         prop.items,
         shouldBox,
-        inDeclaration
+        inFnSignature
       );
 
   return type === "" ? "object" : type;
