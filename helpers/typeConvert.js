@@ -1,7 +1,7 @@
 const toSafeName = require("./toClassName");
 
 const fromFormat = (propFormat, shouldBox, inFnSignature) => {
-  const notNullPrefix  = !shouldBox && inFnSignature ? "@NonNull " : "";
+  const notNullPrefix = !shouldBox && inFnSignature ? "@NonNull " : "";
   switch (propFormat) {
     case "int32":
       return shouldBox ? "Integer" : "int";
@@ -12,13 +12,13 @@ const fromFormat = (propFormat, shouldBox, inFnSignature) => {
     case "double":
       return shouldBox ? "Double" : "double";
     case "date":
-      return notNullPrefix  + "LocalDate";
+      return notNullPrefix + "LocalDate";
     case "date-time":
-      return notNullPrefix  + "ZonedDateTime";
+      return notNullPrefix + "ZonedDateTime";
     case "byte":
     case "binary":
     case "string":
-      return notNullPrefix  + "String";
+      return notNullPrefix + "String";
     default:
       return shouldBox ? "Void" : "void";
   }
@@ -31,7 +31,7 @@ const fromType = (
   shouldBox,
   inFnSignature
 ) => {
-  const notNullPrefix  = !shouldBox && inFnSignature ? "@NonNull " : "";
+  const notNullPrefix = !shouldBox && inFnSignature ? "@NonNull " : "";
   switch (propType) {
     case "integer":
       return shouldBox ? "Integer" : "int";
@@ -40,7 +40,7 @@ const fromType = (
     case "boolean":
       return shouldBox ? "Boolean" : "boolean";
     case "string":
-      return notNullPrefix  + "String";
+      return notNullPrefix + "String";
     case "array":
       return `List<${typeConvert(items, true)}>`;
     // inline object definition
@@ -48,7 +48,7 @@ const fromType = (
       if (additionalProperties) {
         return `HashMap<String,${typeConvert(additionalProperties, true)}>`;
       } else {
-        return notNullPrefix  + "Object";
+        return notNullPrefix + "Object";
       }
     default:
       return shouldBox ? "Void" : "void";
@@ -62,8 +62,8 @@ const typeConvert = (prop, shouldBox = false, inFnSignature = false) => {
 
   // resolve references
   if (prop.$ref) {
-    const notNullPrefix  = !shouldBox && inFnSignature ? "@NonNull " : "";
-    return notNullPrefix  + toSafeName(prop.$ref.split("/").pop());
+    const notNullPrefix = !shouldBox && inFnSignature ? "@NonNull " : "";
+    return notNullPrefix + toSafeName(prop.$ref.split("/").pop());
   }
 
   const type = prop.format
