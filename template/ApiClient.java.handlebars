@@ -13,6 +13,8 @@ import okhttp3.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.lang.NonNull;
+
 
 
 
@@ -49,9 +51,9 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
     public HttpResponse<{{safeTypeConvert _response.schema true}}> {{operationId}}(
         {{~#each _sortedParameters ~}}
             {{#ifEquals required true}}
-                {{~safeTypeConvert schema false}} {{toParamName name ~}}
+                {{~safeTypeConvert schema false true}} {{toParamName name ~}}
             {{else}}
-                {{~safeTypeConvert schema true}} {{toParamName name ~}}
+                {{~safeTypeConvert schema true true}} {{toParamName name ~}}
             {{/ifEquals}}
             {{~#unless @last}}, {{/unless ~}}
         {{~/each ~}}
@@ -97,7 +99,16 @@ public class ApiClient{{_tag.name}} implements IApiClient{{_tag.name}} {
         );
     }
     {{else}}
-    public {{#if _response.schema}}HttpResponse<{{safeTypeConvert _response.schema true}}>{{/if}} {{operationId}}({{#each _sortedParameters}}{{safeTypeConvert schema}} {{name}}{{#if schema.default}} = {{{quoteIfString schema.default}}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}) throws UnsupportedOperationException
+    public {{#if _response.schema}}HttpResponse<{{safeTypeConvert _response.schema true}}>{{/if}} {{operationId}}(
+        {{~#each _sortedParameters ~}}
+            {{#ifEquals required true}}
+                {{~safeTypeConvert schema false true}} {{toParamName name ~}}
+            {{else}}
+                {{~safeTypeConvert schema true true}} {{toParamName name ~}}
+            {{/ifEquals}}
+            {{~#unless @last}}, {{/unless ~}}
+        {{~/each ~}}
+     ) throws UnsupportedOperationException
     {
         throw new UnsupportedOperationException("Operation 'uploadFile' most likely does not support json encoded requests which are not supported by openapi forge.");
     }    
