@@ -31,6 +31,28 @@ $ openapi-forge forge
 
 This generates an API from the Pet Store swagger definition, using the generator within the current folder (`.`), outputting the results to the `api` folder.
 
+Afterwards, by modiyfing the `Application.java` in the generated `api` project, we can fetch every `available` pet and print them into stdout.
+
+```java
+import java.util.List;
+import java.util.stream.Collectors;
+import okhttp3.OkHttpClient;
+
+..
+  public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+    return args -> {
+      Configuration configuration = new Configuration();
+      configuration.basePath = "https://petstore3.swagger.io";
+      OkHttpClient client = new OkHttpClient();
+      ApiClientPet apiClientPet = new ApiClientPet(client, configuration);
+      HttpResponse<List<Pet>> pets = apiClientPet.findPetsByStatus("available");
+      System.out.println(pets.data.stream().map(x -> x.getName()).collect(Collectors.toList()));
+    };
+  }
+..
+
+```
+
 ### Testing
 
 The standard test script is used to execute the BDD-style tests against this generator.
