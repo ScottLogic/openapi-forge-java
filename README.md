@@ -1,8 +1,6 @@
 ## OpenAPI Forge - Java
 
-This repository is the Java generator for the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge), see that repository for usage instructions:
-
-https://github.com/ScottLogic/openapi-forge
+This repository is the Java generator for the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge), see that repository for usage instructions.
 
 ## Configuration
 
@@ -20,7 +18,7 @@ Options:
 
 ### Running
 
-To run this generator, you also need to have [OpenAPI Forge] installed, or the repository checked out. Assuming you have it installed as a global module, you can run this generator as follows:
+To run this generator, you also need to have [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge) installed, or the repository checked out. Assuming you have it installed as a global module, you can run this generator as follows:
 
 ```
 $ openapi-forge forge
