@@ -14,7 +14,8 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasspathResource("com/openapi/forge")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.openapi.forge")
-// dont run one particular scenario with a get request with body.
+// Skip a test scenario where a non-standard behaviour of GET request with requestBody is used.
+// See discussion in https://github.com/ScottLogic/openapi-forge/issues/182.
 @ConfigurationParameter(
   key = FILTER_NAME_PROPERTY_NAME,
   value = "^(?!Calling API methods with a request body).*$"
