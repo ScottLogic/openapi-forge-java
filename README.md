@@ -1,8 +1,6 @@
 ## OpenAPI Forge - Java
 
-This repository is the Java generator for the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge), see that repository for usage instructions:
-
-https://github.com/ScottLogic/openapi-forge
+This repository is the Java generator for the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge), see that repository for usage instructions.
 
 ## Configuration
 
@@ -20,7 +18,7 @@ Options:
 
 ### Running
 
-To run this generator, you also need to have [OpenAPI Forge] installed, or the repository checked out. Assuming you have it installed as a global module, you can run this generator as follows:
+To run this generator, you also need to have [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge) installed, or the repository checked out. Assuming you have it installed as a global module, you can run this generator as follows:
 
 ```
 $ openapi-forge forge
@@ -30,6 +28,28 @@ $ openapi-forge forge
 ```
 
 This generates an API from the Pet Store swagger definition, using the generator within the current folder (`.`), outputting the results to the `api` folder.
+
+Afterwards, by modiyfing the `Application.java` in the generated `api` project, we can fetch every `available` pet and print them into stdout.
+
+```java
+import java.util.List;
+import java.util.stream.Collectors;
+import okhttp3.OkHttpClient;
+
+// ..
+public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+  return args -> {
+    Configuration configuration = new Configuration();
+    configuration.basePath = "https://petstore3.swagger.io";
+    OkHttpClient client = new OkHttpClient();
+    ApiClientPet apiClientPet = new ApiClientPet(client, configuration);
+    HttpResponse<List<Pet>> pets = apiClientPet.findPetsByStatus("available");
+    System.out.println(pets.data.stream().map(x -> x.getName()).collect(Collectors.toList()));
+  };
+}
+// ..
+
+```
 
 ### Testing
 
