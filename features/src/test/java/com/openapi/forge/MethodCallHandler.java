@@ -28,6 +28,8 @@ public class MethodCallHandler {
 
   private final String packageName = this.getClass().getPackageName();
   private final TypeConverter typeConverter;
+  // This is a singleton so that we compile classes exactly once for each scenario:
+  private ClassLoader classLoader;
 
   MethodCallHandler(TypeConverter typeConverter) {
     this.typeConverter = typeConverter;
@@ -55,12 +57,7 @@ public class MethodCallHandler {
         true,
         classLoader
       );
-      Object apiClient = createApiClient(
-        apiClientClass,
-        mockHttp,
-        serverIndex,
-        classLoader
-      );
+      Object apiClient = createApiClient(apiClientClass, mockHttp, serverIndex);
 
       Method[] allMethods = apiClientClass.getDeclaredMethods();
       Method methodWithParameters = Arrays
@@ -76,7 +73,7 @@ public class MethodCallHandler {
       Object objectResponse = methodWithParameters.invoke(
         apiClient,
         convertedParameters
-      ); // ONLY WORKS WITH BOXED VALUES
+      );
       return new MethodResponse(
         requestArgumentCaptor.getValue(),
         extractFromHttpResponseWrapper(objectResponse, "data"),
@@ -112,8 +109,12 @@ public class MethodCallHandler {
 
   private ClassLoader createClassLoaderForPackage()
     throws MalformedURLException {
-    File root = new File("src/main/java/");
-    return URLClassLoader.newInstance(new URL[] { root.toURI().toURL() });
+    if (classLoader == null) {
+      File root = new File("src/main/java/");
+      classLoader =
+        URLClassLoader.newInstance(new URL[] { root.toURI().toURL() });
+    }
+    return classLoader;
   }
 
   private void createOkHttpMocks(
@@ -246,6 +247,9 @@ public class MethodCallHandler {
   }
 
   private void compileFilesInPackage() {
+    if (classLoader != null) {
+      return;
+    }
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     File srcMain = new File(
       "src/main/java/" + packageName.replaceAll("\\.", "/")
@@ -262,8 +266,6 @@ public class MethodCallHandler {
     String[] filePaths = new String[filesInSrcMain.length];
     for (int i = 0; i < filesInSrcMain.length; i++) {
       filePaths[i] = filesInSrcMain[i].getPath();
-      // TODO: Use a logger for this (it's noisy but helpful for debugging):
-      //      System.err.println("compiling " + filePaths[i]);
     }
     compiler.run(null, null, null, filePaths);
   }
@@ -271,8 +273,7 @@ public class MethodCallHandler {
   private Object createApiClient(
     Class<?> apiClientClass,
     OkHttpClient mockHttp,
-    int serverIndex,
-    ClassLoader classLoader
+    int serverIndex
   )
     throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, MalformedURLException {
     Class<?> configurationClass = Class.forName(
